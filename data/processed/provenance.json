@@ -1,0 +1,68 @@
+{
+  "moex_rusfar": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "moex_rusfarind": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "moex_imoex": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "moex_zcyc": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "moex_mm_etf_prices": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "cbr_key_rate": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "cbr_fx_usd": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "cbr_fx_cny": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "cbr_dep_rate": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "moex_fund_flows": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  },
+  "cbr_fund_flows": {
+    "origin": "missing",
+    "file": "",
+    "download_date": "",
+    "url": ""
+  }
+}

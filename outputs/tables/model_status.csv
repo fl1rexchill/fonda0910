@@ -1,0 +1,2 @@
+step,status,message
+H1,skipped,нет зависимой переменной flow_mm_pct (нет данных о потоках/СЧА)

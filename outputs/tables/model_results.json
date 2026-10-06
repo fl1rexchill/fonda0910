@@ -1,0 +1,221 @@
+{
+  "model_start": "2023-01",
+  "dummies": [
+    "d_2026_04",
+    "d_2026_07"
+  ],
+  "stationarity": [
+    {
+      "variable": "flow_mm",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_mm",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "nav_mm",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "nav_mm",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_mm_pct",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_mm_pct",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_bond",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_bond",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_bond_pct",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "flow_bond_pct",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "rusfar_avg",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "rusfar_avg",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "rusfarind_ret",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "rusfarind_ret",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "key_rate_avg",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "key_rate_avg",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "key_rate_eom",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "key_rate_eom",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "d_key_rate",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "d_key_rate",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "dep_rate",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "dep_rate",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "spread_dep",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "spread_dep",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "spread_key",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "spread_key",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "ofz_slope",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "ofz_slope",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "imoex_ret",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "imoex_ret",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "imoex_vol",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "imoex_vol",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "fx_vol",
+      "form": "уровень",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    },
+    {
+      "variable": "fx_vol",
+      "form": "первая разность",
+      "n": 0,
+      "conclusion": "не рассчитан (мало наблюдений)"
+    }
+  ],
+  "y_n": 0,
+  "status": [
+    {
+      "step": "H1",
+      "status": "skipped",
+      "message": "нет зависимой переменной flow_mm_pct (нет данных о потоках/СЧА)"
+    }
+  ]
+}
