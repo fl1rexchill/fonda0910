@@ -82,6 +82,12 @@ RECON_TEXT = """\
    биржевая сделка и выдача паёв УК фиксируются в разные дни (T+1).
 5. **Пересмотры.** ЦБ может уточнять данные в следующих выпусках обзоров.
    В сверке используется версия, указанная в `source_url`.
+6. **Охват в обзорах ЦБ 2023–2026 гг.** «Обзор ключевых показателей управляющих
+   компаний» приводит нетто-приток по всем БПИФ (категория `bpif_all`), а не
+   по фондам денежного рынка отдельно. В тексте обзоров сказано, что почти весь
+   приток приходится на фонды денежного рынка, но это качественная оценка.
+   Поэтому строки с `same_scope = 0` сравнивают разные совокупности, и
+   разница включает потоки остальных БПИФ.
 """
 
 
@@ -164,19 +170,24 @@ def data_sources() -> str:
             "соответствующей регрессии (listwise). Число наблюдений указано в каждой таблице.\n",
             "\n## 6. Сверка Мосбиржи и Банка России (`data/reconciliation.csv`)\n", RECON_TEXT]
     pairs = rec.dropna(subset=["flow_moex_bln", "flow_cbr_bln"]) if len(rec) else rec
-    if len(pairs):
-        mm = pairs[pairs["category"] == "money_market"]
-        if len(mm):
-            corr = mm["flow_moex_bln"].corr(mm["flow_cbr_bln"]) if len(mm) > 2 else np.nan
-            out.append(f"\nФонды денежного рынка: сопоставимых периодов {len(mm)}; средняя разница "
-                       f"(Мосбиржа − ЦБ) {fmt(mm['diff_bln'].mean(), 1)} млрд руб.; средняя абсолютная "
-                       f"разница {fmt(mm['diff_bln'].abs().mean(), 1)} млрд руб.; корреляция рядов "
+    for scope, name in ((1, "одинаковый охват (фонды денежного рынка)"),
+                        (0, "разный охват (Мосбиржа — фонды денежного рынка, ЦБ — все БПИФ)")):
+        sub = pairs[pairs["same_scope"] == scope] if len(pairs) else pairs
+        if len(sub):
+            corr = sub["flow_moex_bln"].corr(sub["flow_cbr_bln"]) if len(sub) > 2 else np.nan
+            out.append(f"\n{name.capitalize()}: сопоставимых периодов {len(sub)}; средняя разница "
+                       f"(Мосбиржа − ЦБ) {fmt(sub['diff_bln'].mean(), 1)} млрд руб.; средняя абсолютная "
+                       f"разница {fmt(sub['diff_bln'].abs().mean(), 1)} млрд руб.; корреляция "
                        f"{fmt(corr, 2)}.\n")
-        out.append("\n" + to_markdown(pairs, digits=1))
-    else:
-        out.append("\n**Сверка не выполнена: нет пар значений.** `data/reconciliation.csv` содержит "
-                   "только заголовки. Нужно заполнить `data/manual/moex_fund_flows.csv` и "
-                   "`data/manual/cbr_fund_flows.csv`.\n")
+    if not len(pairs):
+        out.append("\n**Сверка не выполнена: нет пар значений Мосбиржи и ЦБ.** "
+                   + ("Значения ЦБ внесены (таблица ниже), ряда Мосбиржи нет: нужно заполнить "
+                      "`data/manual/moex_fund_flows.csv`.\n" if len(rec) else
+                      "Нужно заполнить `data/manual/moex_fund_flows.csv` и `data/manual/cbr_fund_flows.csv`.\n"))
+    if len(rec):
+        show = rec[["period", "period_type", "cbr_category", "same_scope", "flow_moex_bln",
+                    "flow_cbr_bln", "diff_bln", "nav_moex_bln", "nav_cbr_bln", "cbr_source"]]
+        out.append("\n" + to_markdown(show, digits=1))
     out += ["\n## 7. Дамми-переменные: включённые и предложенные\n",
             "Регуляторные и налоговые даты предложены для проверки. Решение о включении "
             "принимает автор (колонка `include` в `data/manual/dummies.csv`).\n\n",

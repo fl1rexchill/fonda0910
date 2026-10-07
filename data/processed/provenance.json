@@ -61,9 +61,9 @@
     "url": ""
   },
   "cbr_fund_flows": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "manual",
+    "file": "data/manual/cbr_fund_flows.csv",
+    "download_date": "2026-10-07 (дата изменения файла)",
+    "url": "см. source_url в файле"
   }
 }

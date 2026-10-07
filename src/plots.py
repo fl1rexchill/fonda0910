@@ -151,18 +151,22 @@ def fig3_mm_vs_bond(ds, done, skipped) -> None:
 def fig4_reconciliation(done, skipped) -> None:
     path = config.DATA / "reconciliation.csv"
     rec = pd.read_csv(path) if path.exists() else pd.DataFrame()
-    rec = rec[(rec.get("category") == "money_market")] if len(rec) else rec
+    rec = rec[rec.get("moex_category") == "money_market"] if len(rec) else rec
     if rec.empty or rec[["flow_moex_bln", "flow_cbr_bln"]].dropna().empty:
         skipped.append(("fig4_reconciliation.png", "нет пар значений Мосбиржи и Банка России"))
         return
     rec = rec[rec["period_type"] == rec["period_type"].mode()[0]]
+    # одна категория ЦБ на графике: денежный рынок, если есть, иначе все БПИФ
+    cat = "money_market" if (rec["cbr_category"] == "money_market").any() else "bpif_all"
+    rec = rec[rec["cbr_category"] == cat]
     rec = rec.dropna(subset=["flow_moex_bln", "flow_cbr_bln"], how="all").reset_index(drop=True)
     fig, ax = plt.subplots(figsize=(WIDTH_IN, 3.0))
     pos = np.arange(len(rec))
     w = 0.38
     ax.bar(pos - w / 2 - 0.01, rec["flow_moex_bln"], w, color=INK, label="Мосбиржа")
     ax.bar(pos + w / 2 + 0.01, rec["flow_cbr_bln"], w, color="white", edgecolor=INK,
-           hatch="////", lw=0.6, label="Банк России")
+           hatch="////", lw=0.6,
+           label="Банк России (все БПИФ)" if cat == "bpif_all" else "Банк России")
     ax.axhline(0, color=INK, lw=0.6)
     ax.set_xticks(pos, rec["period"].astype(str), rotation=45, ha="right")
     ax.set_ylabel("млрд руб.")

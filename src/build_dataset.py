@@ -308,42 +308,51 @@ def _add_flows(ds: pd.DataFrame, moex, cbr) -> None:
     ds["flow_bond_source"] = best_name if best_n > 0 else None
 
 
+# Категория ряда Мосбиржи, с которой сравнивается категория ЦБ. ЦБ в обзорах
+# даёт потоки по всем БПИФ (bpif_all), не выделяя фонды денежного рынка.
+RECON_PAIRS = {"money_market": "money_market", "bpif_all": "money_market", "bond": "bond"}
+
+
 def reconciliation(moex, cbr) -> pd.DataFrame:
-    """Сверка потоков Мосбиржи и ЦБ: помесячно (если у ЦБ есть месяцы) и поквартально."""
-    cols = ["period", "period_type", "category", "flow_moex_bln", "flow_cbr_bln",
-            "diff_bln", "diff_pct_of_cbr", "nav_moex_bln", "nav_cbr_bln",
-            "moex_months_in_quarter", "cbr_scope"]
-    if moex is None or cbr is None:
+    """Сверка потоков Мосбиржи и ЦБ: строка на каждое значение ЦБ (месяц или
+    квартал). Значения Мосбиржи суммируются до квартала только при наличии всех
+    трёх месяцев. same_scope = 0, если охват рядов различается (ЦБ — все БПИФ)."""
+    cols = ["period", "period_type", "cbr_category", "moex_category", "same_scope",
+            "flow_moex_bln", "flow_cbr_bln", "diff_bln", "diff_pct_of_cbr",
+            "nav_moex_bln", "nav_cbr_bln", "moex_months_in_quarter", "cbr_scope", "cbr_source"]
+    if cbr is None:
         return pd.DataFrame(columns=cols)
     rows = []
-    for cat in ("money_market", "bond"):
-        m = moex[moex["category"] == cat].copy()
-        c = cbr[cbr["category"] == cat].copy()
-        if m.empty or c.empty:
+    for _, cr in cbr.iterrows():
+        cat_c = cr["category"]
+        cat_m = RECON_PAIRS.get(cat_c)
+        if cat_m is None:
             continue
-        m["month"] = pd.PeriodIndex(m["month"].astype(str), freq="M")
-        m = m.set_index("month").sort_index()
-        for _, cr in c.iterrows():
-            if cr["period_type"] == "M":
-                p = pd.Period(str(cr["period"]), freq="M")
-                f_m = m["flow_bln"].get(p, np.nan)
-                n_m = m["nav_bln_eom"].get(p, np.nan)
-                k = int(pd.notna(f_m))
-            else:
-                p = pd.Period(str(cr["period"]), freq="Q")
-                sub = m[(m.index.asfreq("Q") == p)]
-                k = int(sub["flow_bln"].notna().sum())
-                # квартальная сумма только при полном покрытии трёх месяцев
-                f_m = sub["flow_bln"].sum() if k == 3 else np.nan
-                n_m = sub["nav_bln_eom"].get(p.asfreq("M", "end"), np.nan)
-            f_c = float(cr["flow_bln"]) if pd.notna(cr["flow_bln"]) else np.nan
-            rows.append({
-                "period": str(p), "period_type": cr["period_type"], "category": cat,
-                "flow_moex_bln": f_m, "flow_cbr_bln": f_c, "diff_bln": f_m - f_c,
-                "diff_pct_of_cbr": (f_m - f_c) / abs(f_c) * 100 if f_c else np.nan,
-                "nav_moex_bln": n_m, "nav_cbr_bln": cr.get("nav_bln_eop", np.nan),
-                "moex_months_in_quarter": k, "cbr_scope": cr.get("fund_scope", ""),
-            })
+        m = moex[moex["category"] == cat_m].copy() if moex is not None else pd.DataFrame()
+        if not m.empty:
+            m["month"] = pd.PeriodIndex(m["month"].astype(str), freq="M")
+            m = m.set_index("month").sort_index()
+        if cr["period_type"] == "M":
+            p = pd.Period(str(cr["period"]), freq="M")
+            f_m = m["flow_bln"].get(p, np.nan) if not m.empty else np.nan
+            n_m = m["nav_bln_eom"].get(p, np.nan) if not m.empty else np.nan
+            k = int(pd.notna(f_m))
+        else:
+            p = pd.Period(str(cr["period"]), freq="Q")
+            sub = m[m.index.asfreq("Q") == p] if not m.empty else pd.DataFrame(columns=["flow_bln", "nav_bln_eom"])
+            k = int(sub["flow_bln"].notna().sum())
+            f_m = sub["flow_bln"].sum() if k == 3 else np.nan
+            n_m = sub["nav_bln_eom"].get(p.asfreq("M", "end"), np.nan) if len(sub) else np.nan
+        f_c = float(cr["flow_bln"]) if pd.notna(cr["flow_bln"]) else np.nan
+        rows.append({
+            "period": str(p), "period_type": cr["period_type"], "cbr_category": cat_c,
+            "moex_category": cat_m, "same_scope": int(cat_c == cat_m),
+            "flow_moex_bln": f_m, "flow_cbr_bln": f_c, "diff_bln": f_m - f_c,
+            "diff_pct_of_cbr": (f_m - f_c) / abs(f_c) * 100 if f_c else np.nan,
+            "nav_moex_bln": n_m, "nav_cbr_bln": cr.get("nav_bln_eop", np.nan),
+            "moex_months_in_quarter": k, "cbr_scope": cr.get("fund_scope", ""),
+            "cbr_source": cr.get("source_title", ""),
+        })
     return pd.DataFrame(rows, columns=cols)
 
 
