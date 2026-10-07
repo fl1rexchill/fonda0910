@@ -51,11 +51,20 @@ DERIVATIONS = [
     "средняя месячная доходность цен биржевых фондов денежного рынка (если нет — "
     "RUSFARIND, если нет — `rusfar_ret_calc`). Такие месяцы помечены `flow_is_estimated = 1`, "
     "источник r — в `r_source`.",
+    "Если сводного ряда Мосбиржи нет, поток считается по СЧА отдельных фондов "
+    "(`data/manual/fund_nav_monthly.csv`) для фиксированного списка фондов из "
+    "`data/manual/mm_funds.csv`: поток фонда = СЧА(t) − СЧА(t−1)·(1 + r/100), где r — "
+    "месячная доходность биржевой цены этого фонда (ISS); если цены нет — RUSFARIND. В месяц "
+    "запуска фонда поток равен его СЧА. Сумма по фондам считается только если СЧА есть у "
+    "всех фондов списка, запущенных к этому месяцу, иначе месяц пропускается: так смена "
+    "состава выборки не превращается в «приток». Интерполяция СЧА не применяется. "
+    "Источник ряда указан в `flow_mm_source`, число фондов — в `mm_funds_n`.",
 ]
 
 
 # Фиксированная схема dataset.csv: колонки есть всегда, даже если ряд не загружен.
 COLUMNS = ["flow_mm", "nav_mm", "flow_mm_pct", "flow_is_estimated", "r_source",
+           "flow_mm_source", "mm_funds_n",
            "flow_bond", "nav_bond", "flow_bond_pct", "flow_bond_source",
            "rusfar_avg", "rusfar_ret_calc", "rusfarind_ret", "mm_etf_ret", "mm_etf_n",
            "key_rate_avg", "key_rate_eom", "d_key_rate", "dep_rate", "dep_rate_long",
@@ -200,10 +209,12 @@ def build() -> pd.DataFrame:
         ds["ofz_slope"] = y1 - y3
         ds["ofz_source"] = pd.Series(src, index=df.index).where(ds["ofz_slope"].notna())
     # Цены биржевых ФДР → доходность r
+    fund_rets = pd.DataFrame(index=months)
     df, prov["moex_mm_etf_prices"] = load("moex_mm_etf_prices")
     if df is not None:
         rets = {t: pct_change_eom(g, "value") for t, g in df.groupby("ticker")}
-        ds["mm_etf_ret"] = pd.DataFrame(rets).mean(axis=1, skipna=True)
+        fund_rets = pd.DataFrame(rets)
+        ds["mm_etf_ret"] = fund_rets.mean(axis=1, skipna=True)
         ds["mm_etf_n"] = pd.DataFrame(rets).notna().sum(axis=1)
     # Ключевая ставка
     df, prov["cbr_key_rate"] = load("cbr_key_rate")
@@ -237,7 +248,12 @@ def build() -> pd.DataFrame:
     # Потоки и СЧА: Мосбиржа (основной ряд), ЦБ (сверка, облигационные фонды)
     moex, prov["moex_fund_flows"] = load("moex_fund_flows")
     cbr, prov["cbr_fund_flows"] = load("cbr_fund_flows")
-    _add_flows(ds, moex, cbr)
+    navf, prov["fund_nav_monthly"] = load("fund_nav_monthly")
+    reg_path = config.MANUAL / "mm_funds.csv"
+    registry = pd.read_csv(reg_path) if reg_path.exists() else None
+    panel = fund_panel(ds.index, navf, registry, fund_rets,
+                       ds["rusfarind_ret"] if "rusfarind_ret" in ds else pd.Series(np.nan, index=ds.index))
+    _add_flows(ds, moex, cbr, panel)
 
     # Дамми
     dmy = pd.read_csv(config.MANUAL / "dummies.csv")
@@ -276,8 +292,65 @@ def _monthly(df: pd.DataFrame | None, category: str, period_col: str,
         columns={flow_col: "flow", nav_col: "nav"}).astype(float)
 
 
-def _add_flows(ds: pd.DataFrame, moex, cbr) -> None:
+def fund_panel(index: pd.PeriodIndex, navf: pd.DataFrame | None, registry: pd.DataFrame | None,
+               fund_rets: pd.DataFrame, fallback_r: pd.Series) -> pd.DataFrame:
+    """Поток и СЧА по фиксированному списку фондов (см. DERIVATIONS)."""
+    out = pd.DataFrame(index=index, columns=["flow", "nav", "n_funds", "r_source"], dtype=object)
+    if navf is None or registry is None or registry.empty:
+        return out
+    reg = registry[registry["include"] == 1]
+    funds = [(r.ticker, pd.Period(str(r.launch_month), freq="M")) for r in reg.itertuples()]
+    d = navf.assign(month=pd.PeriodIndex(navf["month"].astype(str), freq="M"))
+    if d.duplicated(["month", "ticker"]).any():
+        raise ValueError("дубли (month, ticker) в fund_nav_monthly.csv")
+    nav = d.pivot(index="month", columns="ticker", values="nav_bln_eom").astype(float).reindex(index)
+
+    def get(frame, t, f):
+        return frame.at[t, f] if (f in frame.columns and t in frame.index) else np.nan
+
+    for t in index:
+        active = [(f, launch) for f, launch in funds if launch <= t]
+        if not active:
+            continue
+        navs = [get(nav, t, f) for f, _ in active]
+        if any(pd.isna(v) for v in navs):
+            continue  # нет СЧА хотя бы одного фонда: месяц пропускается
+        out.at[t, "nav"], out.at[t, "n_funds"] = float(sum(navs)), len(active)
+        flows, srcs = [], set()
+        for (f, launch), n_t in zip(active, navs):
+            if launch == t:
+                flows.append(n_t)
+                srcs.add("запуск фонда")
+                continue
+            n_p = get(nav, t - 1, f)
+            r, src = get(fund_rets, t, f), "цена фонда (ISS)"
+            if pd.isna(r):
+                r, src = fallback_r.get(t, np.nan), "RUSFARIND (нет цены фонда)"
+            if pd.isna(n_p) or pd.isna(r):
+                flows = None
+                break
+            flows.append(n_t - n_p * (1 + r / 100))
+            srcs.add(src)
+        if flows is not None:
+            out.at[t, "flow"], out.at[t, "r_source"] = float(sum(flows)), "; ".join(sorted(srcs))
+    return out
+
+
+def _add_flows(ds: pd.DataFrame, moex, cbr, panel: pd.DataFrame | None = None) -> None:
     mm = _monthly(moex, "money_market", "month", "flow_bln", "nav_bln_eom")
+    use_panel = (mm.dropna(how="all").empty and panel is not None
+                 and pd.to_numeric(panel["nav"], errors="coerce").notna().any())
+    if use_panel:
+        # источник выбирается для ряда целиком, а не по месяцам
+        ds["flow_mm"] = pd.to_numeric(panel["flow"], errors="coerce")
+        ds["nav_mm"] = pd.to_numeric(panel["nav"], errors="coerce")
+        ds["mm_funds_n"] = pd.to_numeric(panel["n_funds"], errors="coerce")
+        ds["flow_is_estimated"] = ds["flow_mm"].notna().astype(int)
+        ds["r_source"] = panel["r_source"].where(ds["flow_mm"].notna())
+        ds["flow_mm_source"] = np.where(ds["flow_mm"].notna(), "СЧА фондов (fund_nav_monthly)", None)
+        ds["flow_mm_pct"] = ds["flow_mm"] / ds["nav_mm"].shift(1) * 100
+        _add_bond(ds, moex, cbr)
+        return
     ds["flow_mm"] = mm["flow"]
     ds["nav_mm"] = mm["nav"]
     # оценка потока там, где прямого значения нет
@@ -293,8 +366,13 @@ def _add_flows(ds: pd.DataFrame, moex, cbr) -> None:
     ds["flow_is_estimated"] = need.astype(int)
     ds.loc[need, "flow_mm"] = est[need]
     ds["r_source"] = r_src.where(need)
+    ds["flow_mm_source"] = np.where(ds["flow_mm"].isna(), None,
+                                    np.where(need, "Мосбиржа: оценка по ΔСЧА", "Мосбиржа"))
     ds["flow_mm_pct"] = ds["flow_mm"] / ds["nav_mm"].shift(1) * 100
+    _add_bond(ds, moex, cbr)
 
+
+def _add_bond(ds: pd.DataFrame, moex, cbr) -> None:
     # облигационные фонды: берётся источник с бо́льшим покрытием модельного периода
     best, best_n, best_name = None, -1, ""
     for name, df in (("cbr", _monthly(cbr, "bond", "period", "flow_bln", "nav_bln_eop")),

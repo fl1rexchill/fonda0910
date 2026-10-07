@@ -128,6 +128,30 @@ def test_month_end_check():
     assert math.isclose(r[pd.Period("2026-05", "M")], 1.0) and pd.isna(r[pd.Period("2026-06", "M")])
 
 
+def test_fund_panel():
+    """Сумма по фондам: смена состава данных не даёт «притока», запуск фонда даёт."""
+    from src.build_dataset import fund_panel
+    idx = pd.period_range("2024-11", "2025-03", freq="M")
+    reg = pd.DataFrame({"ticker": ["AAA", "BBB", "CCC"], "launch_month": ["2020-01", "2020-01", "2025-02"],
+                        "include": [1, 1, 1]})
+    nav = pd.DataFrame([("2024-11", "AAA", 100.0), ("2024-12", "AAA", 110.0), ("2025-01", "AAA", 111.0),
+                        ("2025-02", "AAA", 112.0), ("2025-03", "AAA", 113.0),
+                        # BBB: данных за 2024-11 нет — 2024-11 и 2024-12 должны выпасть
+                        ("2024-12", "BBB", 50.0), ("2025-01", "BBB", 50.5), ("2025-02", "BBB", 51.0),
+                        ("2025-03", "BBB", 51.0),
+                        ("2025-02", "CCC", 20.0), ("2025-03", "CCC", 20.0)],
+                       columns=["month", "ticker", "nav_bln_eom"])
+    rets = pd.DataFrame({"AAA": 1.0, "BBB": 1.0, "CCC": 1.0}, index=idx)
+    p = fund_panel(idx, nav, reg, rets, pd.Series(1.0, index=idx))
+    f = pd.to_numeric(p["flow"], errors="coerce")
+    assert pd.isna(f[pd.Period("2024-11", "M")]) and pd.isna(f[pd.Period("2024-12", "M")])
+    # 2025-01: AAA 111 − 110·1.01 = −0.1; BBB 50.5 − 50·1.01 = 0
+    assert math.isclose(f[pd.Period("2025-01", "M")], -0.1, abs_tol=1e-9)
+    # 2025-02: запуск CCC (+20) + AAA (112 − 111·1.01) + BBB (51 − 50.5·1.01)
+    assert math.isclose(f[pd.Period("2025-02", "M")], 20 - 0.11 - 0.005, abs_tol=1e-9)
+    assert p.at[pd.Period("2024-12", "M"), "nav"] == 160.0 and p.at[pd.Period("2025-02", "M"), "n_funds"] == 3
+
+
 def test_compounding():
     d = pd.DataFrame({"date": pd.bdate_range("2024-01-01", "2024-02-29"), "value": 16.0})
     r = compounded_month_return(calendar_daily(d, "value", pd.Timestamp("2024-02-29")))
