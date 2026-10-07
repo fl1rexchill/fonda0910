@@ -37,7 +37,7 @@ VAR_SOURCES = [
      f"{ISS}/history/engines/stock/markets/index/securities/RUSFARIND.json", "Месячное изменение индекса, % (ряд с 31.01.2025)"),
     ("rusfar_ret_calc", "moex_rusfar", "расчёт по RUSFAR", "", "Капитализация RUSFAR overnight за месяц, % (справочный ряд)"),
     ("mm_etf_ret", "moex_mm_etf_prices", "Московская биржа, ISS API, цены закрытия БПИФ " + ", ".join(config.MM_ETF_TICKERS),
-     f"{ISS}/history/engines/stock/markets/shares/boards/{config.MM_ETF_BOARD}/securities/<тикер>.json",
+     f"{ISS}/history/engines/stock/markets/shares/securities/<тикер>.json",
      "Средняя (равновзвешенная) месячная доходность цен фондов, %; используется только как r при оценке потока"),
     ("key_rate_avg / key_rate_eom", "cbr_key_rate", "Банк России, официальная страница «Ключевая ставка Банка России»",
      config.CBR_KEYRATE_PAGE, "Среднее по календарным дням месяца и значение на последний день месяца, %"),
@@ -124,9 +124,9 @@ def data_sources() -> str:
         })
     dep_name = prov.get("cbr_dep_rate", {}).get("series_name", "")
     log = read_fetch_log()
-    failed = log[log["status"] == "failed"].drop_duplicates("series", keep="last")
-    ok_later = set(log[log["status"] == "ok"]["series"])
-    failed = failed[~failed["series"].isin(ok_later)]
+    # последняя запись по каждому ряду; показываются отказы и неполные ряды
+    failed = log.drop_duplicates("series", keep="last")
+    failed = failed[failed["status"] != "ok"]
 
     miss = pd.read_csv(config.PROCESSED / "missing_values.csv") if (config.PROCESSED / "missing_values.csv").exists() else pd.DataFrame()
     n_est = int(ds.loc[ds.get("in_model_sample", 0) == 1, "flow_is_estimated"].sum()) if "flow_is_estimated" in ds else 0
@@ -141,15 +141,17 @@ def data_sources() -> str:
            "\nПриоритет: автоматическая выгрузка из `data/raw/` (в имени файла дата загрузки), "
            "при её отсутствии ручной файл из `data/manual/`. Агрегаторы и новостные сайты "
            "как источник рядов не используются.\n",
-           "## 2. Недоступные источники при последнем запуске\n"]
+           "## 2. Недоступные и неполные ряды при последнем запуске\n"]
     if len(failed):
-        out.append(to_markdown(failed[["series", "url", "error", "run_ts"]].rename(columns={
-            "series": "Ряд", "url": "URL", "error": "Ошибка", "run_ts": "Время"})))
+        out.append(to_markdown(failed[["series", "status", "url", "error", "run_ts"]].rename(columns={
+            "series": "Ряд", "status": "Статус", "url": "URL", "error": "Ошибка / замечание",
+            "run_ts": "Время"})))
         out.append("\nЧто скачать вручную и куда положить, описано в `data/manual/README.md`.\n")
     else:
         out.append("Все автоматические загрузки успешны.\n")
     out += ["\n## 3. Расчётные преобразования\n",
             "\n".join(f"- {d}" for d in DERIVATIONS) + "\n",
+            _rusfar_check(ds),
             "\n## 4. Интерполяция и замены\n",
             "Пропуски не интерполируются и ничем не заменяются. Единственная замена — "
             f"оценка потока по ΔСЧА с флагом `flow_is_estimated = 1`: в модельном периоде "
@@ -180,6 +182,21 @@ def data_sources() -> str:
             "принимает автор (колонка `include` в `data/manual/dummies.csv`).\n\n",
             to_markdown(dmy)]
     return "".join(out)
+
+
+def _rusfar_check(ds: pd.DataFrame) -> str:
+    """Контроль согласованности: RUSFARIND против капитализации RUSFAR."""
+    if not {"rusfarind_ret", "rusfar_ret_calc"} <= set(ds.columns):
+        return ""
+    s = ds[ds["in_model_sample"] == 1][["rusfarind_ret", "rusfar_ret_calc"]].dropna()
+    if len(s) < 3:
+        return ""
+    d = s["rusfarind_ret"] - s["rusfar_ret_calc"]
+    return (f"\nКонтроль: за {len(s)} месяцев модельного периода корреляция `rusfarind_ret` и "
+            f"`rusfar_ret_calc` {fmt(s.corr().iloc[0, 1], 3)}, средняя абсолютная разница "
+            f"{fmt(d.abs().mean(), 3)} п.п. за месяц, максимальная {fmt(d.abs().max(), 3)} п.п. "
+            "Расхождения отдельных месяцев связаны с тем, к какому месяцу индекс относит "
+            "начисление за нерабочие дни на стыке месяцев.\n")
 
 
 # --- results_summary.md --------------------------------------------------------------

@@ -30,7 +30,12 @@ DERIVATIONS = [
     "∏(1 + R/36500) − 1. Используется только как справочный ряд и как r в оценке потока, "
     "если нет цен фондов и RUSFARIND. В `rusfarind_ret` не подставляется.",
     "`rusfarind_ret` — изменение индекса RUSFARIND между последними торговыми днями "
-    "соседних месяцев, %. Индекс рассчитывается с 31.01.2025, поэтому до февраля 2025 г. ряд пуст.",
+    "соседних месяцев, %. Публикация индекса начата 31.01.2025; значения за более ранние даты "
+    "ISS отдаёт как ретроспективный расчёт Мосбиржи, они используются без изменений.",
+    "Месячные доходности по ценам и индексам (`rusfarind_ret`, `imoex_ret`, `mm_etf_ret`) "
+    "считаются только если последнее наблюдение месяца отстоит от конца месяца не более чем "
+    "на 7 календарных дней (с учётом праздников); иначе значение месяца — пропуск. "
+    "Реализованная волатильность считается при не менее чем 10 дневных изменениях в месяце.",
     "`imoex_ret` — изменение IMOEX между последними торговыми днями месяцев, %; "
     "`imoex_vol` — стандартное отклонение дневных лог-доходностей за месяц × √252, % годовых.",
     "`fx_vol` (USD/RUB) и `fx_vol_cny` (CNY/RUB) — стандартное отклонение дневных "
@@ -97,9 +102,19 @@ def _dates(df: pd.DataFrame, col: str = "date") -> pd.DataFrame:
     return df.sort_values(col)
 
 
+EOM_TOLERANCE_DAYS = 7
+MIN_DAYS_FOR_VOL = 10
+
+
 def last_in_month(df: pd.DataFrame, value: str) -> pd.Series:
+    """Значение на последний торговый день месяца; пропуск, если ряд в этом
+    месяце обрывается раньше чем за EOM_TOLERANCE_DAYS дней до конца месяца."""
     df = _dates(df)
-    return df.groupby(df["date"].dt.to_period("M"))[value].last()
+    g = df.groupby(df["date"].dt.to_period("M"))
+    last_val, last_date = g[value].last(), g["date"].last()
+    month_end = last_date.index.to_timestamp(how="end").normalize()
+    complete = (month_end - last_date.values).days <= EOM_TOLERANCE_DAYS
+    return last_val.where(complete)
 
 
 def pct_change_eom(df: pd.DataFrame, value: str) -> pd.Series:
@@ -113,6 +128,7 @@ def realized_vol(df: pd.DataFrame, value: str) -> pd.Series:
     lr = np.log(df[value].astype(float)).diff()
     g = lr.groupby(df["date"].dt.to_period("M"))
     vol = g.std(ddof=1) * np.sqrt(config.ANNUALIZATION_DAYS) * 100
+    vol = vol.where(g.count() >= MIN_DAYS_FOR_VOL)
     # месяц без предыдущего наблюдения (самый первый) — лог-доходность неполная
     first = df["date"].dt.to_period("M").iloc[0]
     vol.loc[first] = np.nan
@@ -337,10 +353,13 @@ MAIN_VARS = ["flow_mm", "nav_mm", "flow_mm_pct", "flow_bond", "flow_bond_pct",
              "imoex_vol", "fx_vol"]
 
 
+AUX_VARS = ["rusfar_ret_calc", "mm_etf_ret", "dep_rate_long", "fx_vol_cny"]
+
+
 def missing_report(ds: pd.DataFrame) -> pd.DataFrame:
     sample = ds[ds.index >= config.MODEL_START]
     rows = []
-    for v in MAIN_VARS:
+    for v in MAIN_VARS + AUX_VARS:
         col = sample[v] if v in sample else pd.Series(np.nan, index=sample.index)
         miss = col.index[col.isna()]
         rows.append({"variable": v, "n_months": len(col), "n_missing": len(miss),

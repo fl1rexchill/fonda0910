@@ -446,6 +446,13 @@ def run() -> dict:
     out["y_n"] = int(y_n)
     if y_n == 0:
         st.add("H1", "skipped", "нет зависимой переменной flow_mm_pct (нет данных о потоках/СЧА)")
+        # VIF не зависит от Y: считается по экзогенным регрессорам H1 (k = 0, без лага Y)
+        Xr = sample[["spread_dep", "d_key_rate", "imoex_ret", "fx_vol"]].dropna()
+        if len(Xr) > 10:
+            vif = vif_table(Xr)
+            save_table(vif, "vif_h1", f"VIF экзогенных регрессоров H1 (k = 0, без лага Y), N = {len(Xr)}")
+            out["vif_max"] = float(vif["vif"].max())
+            st.add("VIF", "ok", f"по экзогенным регрессорам, N={len(Xr)}")
         return _finish(out, st)
     k, lagtab = select_lag(ds, sidx, h1_terms, dums)
     save_table(lagtab, "lag_selection_h1", "Выбор лага k для spread_dep (общая выборка)")

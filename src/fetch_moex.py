@@ -66,9 +66,20 @@ def _close_series(df: pd.DataFrame) -> pd.DataFrame:
                         "value": pd.to_numeric(df[col], errors="coerce")})
     if "BOARDID" in df.columns:
         out["board"] = df["BOARDID"].values
-    out = out.dropna(subset=["value"]).sort_values("date")
-    # Индекс может дублироваться на разных режимах: оставляем одну запись на дату.
-    return out.drop_duplicates("date", keep="last").reset_index(drop=True)
+    # оборот нужен, чтобы при нескольких режимах торгов выбрать основной
+    out["turnover"] = pd.to_numeric(df["VALUE"], errors="coerce").values if "VALUE" in df else 0.0
+    out = out.dropna(subset=["value"]).sort_values(["date", "turnover"])
+    # Одна запись на дату: режим с наибольшим оборотом за этот день.
+    out = out.drop_duplicates("date", keep="last").drop(columns="turnover")
+    return out.reset_index(drop=True)
+
+
+def _check_end(series: str, df: pd.DataFrame, end: str, url: str) -> None:
+    """Ряд, обрывающийся раньше конца периода, отмечается в журнале как partial."""
+    last = df["date"].max()
+    if last < pd.Timestamp(end) - pd.Timedelta(days=10):
+        log_fetch(series, "partial", url=url, rows=len(df),
+                  error=f"ряд заканчивается {last.date()}, период до {end}")
 
 
 def fetch_index(s, key: str, secid: str, start: str, end: str) -> None:
@@ -79,29 +90,35 @@ def fetch_index(s, key: str, secid: str, start: str, end: str) -> None:
         if df.empty:
             raise ValueError("ISS вернул пустой ряд")
         save_raw(df, f"moex_{key}", url)
+        _check_end(f"moex_{key}", df, end, url)
     except Exception as e:  # noqa: BLE001 — любая ошибка источника фиксируется в журнале
         log_fetch(f"moex_{key}", "failed", url=url, error=repr(e))
 
 
 def fetch_mm_etf_prices(s, start: str, end: str) -> None:
+    """Цены закрытия БПИФ денежного рынка по всем режимам рынка shares.
+
+    Режим торгов не фиксируется: при переводе фонда на другой режим ряд не
+    обрывается. На каждую дату берётся режим с наибольшим оборотом (колонка board).
+    """
     frames = []
     for t in config.MM_ETF_TICKERS:
-        path = (f"/history/engines/stock/markets/shares/boards/{config.MM_ETF_BOARD}"
-                f"/securities/{t}.json")
+        path = f"/history/engines/stock/markets/shares/securities/{t}.json"
         url = f"{config.ISS_BASE}{path}?from={start}&till={end}"
         try:
             df = _close_series(iss_history(s, path, start, end))
             if df.empty:
                 raise ValueError("пустой ряд")
             df["ticker"] = t
-            frames.append(df[["date", "ticker", "value"]])
-            log_fetch(f"moex_etf_{t}", "ok", url=url, rows=len(df))
+            frames.append(df[["date", "ticker", "value"] + (["board"] if "board" in df else [])])
+            boards = ", ".join(sorted(df["board"].dropna().unique())) if "board" in df else ""
+            log_fetch(f"moex_etf_{t}", "ok", url=url, rows=len(df), error=f"режимы: {boards}" if boards else "")
+            _check_end(f"moex_etf_{t}", df, end, url)
         except Exception as e:  # noqa: BLE001
             log_fetch(f"moex_etf_{t}", "failed", url=url, error=repr(e))
     if frames:
         save_raw(pd.concat(frames, ignore_index=True), "moex_mm_etf_prices",
-                 f"{config.ISS_BASE}/history/engines/stock/markets/shares/boards/"
-                 f"{config.MM_ETF_BOARD}/securities/<ticker>.json")
+                 f"{config.ISS_BASE}/history/engines/stock/markets/shares/securities/<ticker>.json")
 
 
 # --- Кривая бескупонной доходности (G-кривая) -------------------------------------

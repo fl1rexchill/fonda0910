@@ -9,213 +9,423 @@
       "variable": "flow_mm",
       "form": "уровень",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_mm",
       "form": "первая разность",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "nav_mm",
       "form": "уровень",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "nav_mm",
       "form": "первая разность",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_mm_pct",
       "form": "уровень",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_mm_pct",
       "form": "первая разность",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_bond",
       "form": "уровень",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_bond",
       "form": "первая разность",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_bond_pct",
       "form": "уровень",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "flow_bond_pct",
       "form": "первая разность",
       "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "conclusion": "не рассчитан (мало наблюдений)",
+      "adf_stat": NaN,
+      "adf_p": NaN,
+      "adf_lags": NaN,
+      "kpss_stat": NaN,
+      "kpss_p": NaN,
+      "kpss_note": NaN
     },
     {
       "variable": "rusfar_avg",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "стационарен",
+      "adf_stat": -2.8958899500696313,
+      "adf_p": 0.045828032146836874,
+      "adf_lags": 3.0,
+      "kpss_stat": 0.4623544410455551,
+      "kpss_p": 0.05027825817001935,
+      "kpss_note": ""
     },
     {
       "variable": "rusfar_avg",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "неоднозначно",
+      "adf_stat": -3.2527128583314906,
+      "adf_p": 0.017129144897761347,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.5116970737806874,
+      "kpss_p": 0.03903219058993527,
+      "kpss_note": ""
     },
     {
       "variable": "rusfarind_ret",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "нестационарен",
+      "adf_stat": -2.6910766495823757,
+      "adf_p": 0.07559516802633993,
+      "adf_lags": 4.0,
+      "kpss_stat": 0.4694831684505027,
+      "kpss_p": 0.04853982692556246,
+      "kpss_note": ""
     },
     {
       "variable": "rusfarind_ret",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "неоднозначно",
+      "adf_stat": -1.722756400557261,
+      "adf_p": 0.41942747308626926,
+      "adf_lags": 3.0,
+      "kpss_stat": 0.4472420530406371,
+      "kpss_p": 0.05679221851696679,
+      "kpss_note": ""
     },
     {
       "variable": "key_rate_avg",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "нестационарен",
+      "adf_stat": -2.3383718333857617,
+      "adf_p": 0.1598906878954776,
+      "adf_lags": 2.0,
+      "kpss_stat": 0.46480310715352224,
+      "kpss_p": 0.049593894785242745,
+      "kpss_note": ""
     },
     {
       "variable": "key_rate_avg",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "неоднозначно",
+      "adf_stat": -3.3974605169715857,
+      "adf_p": 0.011045747641906457,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.5136778011834303,
+      "kpss_p": 0.03858608081454272,
+      "kpss_note": ""
     },
     {
       "variable": "key_rate_eom",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "неоднозначно",
+      "adf_stat": -2.3786627585852753,
+      "adf_p": 0.1478494654825216,
+      "adf_lags": 2.0,
+      "kpss_stat": 0.4242694993359397,
+      "kpss_p": 0.06669418132071564,
+      "kpss_note": ""
     },
     {
       "variable": "key_rate_eom",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "нестационарен",
+      "adf_stat": -2.553890436758172,
+      "adf_p": 0.10290647980211026,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.5011815223769138,
+      "kpss_p": 0.04140055802321761,
+      "kpss_note": ""
     },
     {
       "variable": "d_key_rate",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "нестационарен",
+      "adf_stat": -2.58494525404945,
+      "adf_p": 0.09614886841628528,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.4802034245298605,
+      "kpss_p": 0.04612535483561701,
+      "kpss_note": ""
     },
     {
       "variable": "d_key_rate",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "стационарен",
+      "adf_stat": -11.3763652695836,
+      "adf_p": 8.72576607202249e-21,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.08855646306818185,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "dep_rate",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 43,
+      "conclusion": "нестационарен",
+      "adf_stat": -1.977215546554034,
+      "adf_p": 0.2966517646242966,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.5008599695494823,
+      "kpss_p": 0.04147297983119768,
+      "kpss_note": ""
     },
     {
       "variable": "dep_rate",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 42,
+      "conclusion": "неоднозначно",
+      "adf_stat": -3.3349600110112902,
+      "adf_p": 0.013386274575283219,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.5354082455918237,
+      "kpss_p": 0.033691836578418094,
+      "kpss_note": ""
     },
     {
       "variable": "spread_dep",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 43,
+      "conclusion": "неоднозначно",
+      "adf_stat": -2.17486248002851,
+      "adf_p": 0.21549507931369366,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.23033132954938146,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "spread_dep",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 42,
+      "conclusion": "стационарен",
+      "adf_stat": -5.734035055009263,
+      "adf_p": 6.500493611434253e-07,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.07294162321219035,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "spread_key",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "стационарен",
+      "adf_stat": -5.56634326810369,
+      "adf_p": 1.5017492359059616e-06,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.0741205927977259,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "spread_key",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "неоднозначно",
+      "adf_stat": -7.862053498654238,
+      "adf_p": 5.252333314175682e-12,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.5000000000000003,
+      "kpss_p": 0.041666666666666595,
+      "kpss_note": ""
     },
     {
       "variable": "ofz_slope",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "неоднозначно",
+      "adf_stat": -2.7184016209503974,
+      "adf_p": 0.07090775556743532,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.11754942903488831,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "ofz_slope",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "стационарен",
+      "adf_stat": -8.454355762423786,
+      "adf_p": 1.629997668027456e-13,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.09151745607536972,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "imoex_ret",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "стационарен",
+      "adf_stat": -5.725168777474242,
+      "adf_p": 6.797607842485529e-07,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.42773774850661833,
+      "kpss_p": 0.06519924633335417,
+      "kpss_note": ""
     },
     {
       "variable": "imoex_ret",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "стационарен",
+      "adf_stat": -8.113517171568645,
+      "adf_p": 1.2080119335678476e-12,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.3824599171799632,
+      "kpss_p": 0.08471555293967103,
+      "kpss_note": ""
     },
     {
       "variable": "imoex_vol",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "стационарен",
+      "adf_stat": -3.348455140858429,
+      "adf_p": 0.012846669420097538,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.4123419719750366,
+      "kpss_p": 0.07183535690731183,
+      "kpss_note": ""
     },
     {
       "variable": "imoex_vol",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "стационарен",
+      "adf_stat": -6.592735498577856,
+      "adf_p": 7.047922761049266e-09,
+      "adf_lags": 1.0,
+      "kpss_stat": 0.21921461369909157,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "fx_vol",
       "form": "уровень",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 45,
+      "conclusion": "стационарен",
+      "adf_stat": -6.415327670461133,
+      "adf_p": 1.8473627343749112e-08,
+      "adf_lags": 0.0,
+      "kpss_stat": 0.07041183377256949,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     },
     {
       "variable": "fx_vol",
       "form": "первая разность",
-      "n": 0,
-      "conclusion": "не рассчитан (мало наблюдений)"
+      "n": 44,
+      "conclusion": "стационарен",
+      "adf_stat": -4.835471864922309,
+      "adf_p": 4.649616015423477e-05,
+      "adf_lags": 4.0,
+      "kpss_stat": 0.2569610270536327,
+      "kpss_p": 0.1,
+      "kpss_note": "p за границей таблицы"
     }
   ],
   "y_n": 0,
+  "vif_max": 1.1226121743948028,
   "status": [
     {
       "step": "H1",
       "status": "skipped",
       "message": "нет зависимой переменной flow_mm_pct (нет данных о потоках/СЧА)"
+    },
+    {
+      "step": "VIF",
+      "status": "ok",
+      "message": "по экзогенным регрессорам, N=43"
     }
   ]
 }

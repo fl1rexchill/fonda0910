@@ -90,36 +90,69 @@ def _txt(values) -> str:
 
 
 def parse_deposit_xlsx(content: bytes) -> tuple[pd.DataFrame, str]:
-    """Эвристический разбор xlsx ЦБ со ставками по вкладам.
+    """Разбор xlsx ЦБ «Средневзвешенные процентные ставки по привлеченным
+    кредитными организациями вкладам (депозитам) физических лиц и нефинансовых
+    организаций в рублях».
 
-    Ищется лист про физических лиц в рублях и столбец с заголовком
-    «до 1 года, кроме "до востребования"». Разбор принимается только при строгой
-    проверке (≥ 24 месяцев, значения 1–30 % годовых), иначе — исключение,
-    и используется ручной файл. Возвращает (ряд, описание выбранного столбца).
+    Шапка двухуровневая: строка групп («Физических лиц, со сроком привлечения» /
+    «Нефинансовых организаций…») и строка сроков. Берутся столбцы группы
+    физических лиц: «до 1 года, кроме "до востребования"» (dep_rate) и
+    «свыше 1 года» (dep_rate_long). Лист выбирается по заголовку «процентные
+    ставки» и «в рублях». Разбор принимается только при строгой проверке
+    (≥ 24 месяцев, значения 1–30 % годовых), иначе — исключение и ручной файл.
     """
     book = pd.read_excel(io.BytesIO(content), sheet_name=None, header=None)
-    candidates = []
+    found = []
     for sheet, df in book.items():
-        text = _txt(df.head(15).values.ravel())
-        if "физическ" not in text and "физ" not in sheet.lower():
+        title = _txt(df.iloc[:3, 0])
+        if "процентные ставки" not in title or "в рублях" not in title:
             continue
-        if "руб" not in text and "руб" not in sheet.lower():
+        group_row = next((r for r in range(min(10, len(df)))
+                          if any(str(v).strip().lower().startswith("физических лиц") for v in df.iloc[r])), None)
+        if group_row is None:
             continue
-        for ci in range(df.shape[1]):
-            header = _txt(df.iloc[:15, ci])
-            if "до 1 года" in header and "кроме" in header:
-                months = df.iloc[:, 0].map(_to_month)
-                vals = pd.to_numeric(df.iloc[:, ci], errors="coerce")
-                ser = pd.Series(vals.values, index=months.values).dropna()
-                ser = ser[[isinstance(i, pd.Period) for i in ser.index]]
-                if len(ser) >= 24 and ser.between(1, 30).all():
-                    desc = f"лист «{sheet}», столбец «{' '.join(header.split())[:120]}»"
-                    candidates.append((ser, desc))
-    if len(candidates) != 1:
-        raise ValueError(f"однозначный столбец не найден (кандидатов: {len(candidates)})")
-    ser, desc = candidates[0]
-    out = pd.DataFrame({"month": ser.index.astype(str), "dep_rate": ser.values})
-    return out.drop_duplicates("month", keep="last"), desc
+        groups = df.iloc[group_row].ffill()
+        indiv = [c for c in df.columns if "физических лиц" in str(groups[c]).lower()]
+        terms = {c: " ".join(str(df.iat[group_row + 1, c]).split()) for c in indiv}
+        pick = {}
+        for c, name in terms.items():
+            low = name.lower()
+            if low.startswith("до 1 года") and "кроме" in low:
+                pick["dep_rate"] = (c, name)
+            elif low == "свыше 1 года":
+                pick["dep_rate_long"] = (c, name)
+        if "dep_rate" not in pick:
+            continue
+        months = df.iloc[:, 0].map(_to_month)
+        ok = months.map(lambda m: isinstance(m, pd.Period))
+        out = pd.DataFrame({"month": months[ok].astype(str).values})
+        for key, (c, _) in pick.items():
+            out[key] = pd.to_numeric(df.loc[ok, c], errors="coerce").values
+        main = out["dep_rate"].dropna()
+        if len(main) >= 24 and main.between(1, 30).all():
+            desc = (f"Банк России, «{' '.join(str(df.iat[0, 0]).split()).rstrip('*')}», лист «{sheet}»; "
+                    f"dep_rate: физлица, «{pick['dep_rate'][1]}»"
+                    + (f"; dep_rate_long: физлица, «{pick['dep_rate_long'][1]}»" if "dep_rate_long" in pick else ""))
+            found.append((out, desc))
+    if len(found) != 1:
+        raise ValueError(f"однозначный лист со ставками не найден (кандидатов: {len(found)})")
+    out, desc = found[0]
+    out = out.dropna(subset=["dep_rate"]).drop_duplicates("month", keep="last")
+    return out.reset_index(drop=True), desc
+
+
+def reparse_deposits() -> None:
+    """Повторный разбор последнего скачанного xlsx без обращения к сети."""
+    from .common import latest_raw, raw_download_date
+    src = latest_raw("cbr_deposit_rates", "xlsx")
+    if src is None:
+        raise SystemExit("нет data/raw/cbr_deposit_rates_*.xlsx")
+    df, desc = parse_deposit_xlsx(src.read_bytes())
+    df["series_name"] = desc
+    dst = src.with_name(f"cbr_dep_rate_{src.stem.rsplit('_', 1)[-1]}.csv")
+    df.to_csv(dst, index=False)
+    print(f"{dst.name}: {len(df)} месяцев ({df['month'].iloc[0]}…{df['month'].iloc[-1]}), "
+          f"скачан {raw_download_date(src)}; {desc}")
 
 
 def fetch_deposit_rates(s) -> None:
@@ -153,4 +186,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--reparse-deposits" in sys.argv:
+        reparse_deposits()
+    else:
+        main()

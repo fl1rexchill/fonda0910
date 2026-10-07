@@ -25,13 +25,22 @@ def session() -> requests.Session:
     return s
 
 
-def reachable(url: str) -> tuple[bool, str]:
-    """Быстрая проверка доступности источника (без повторов)."""
-    try:
-        r = requests.get(url, timeout=15, headers={"User-Agent": config.USER_AGENT})
-        return (r.status_code < 400, f"HTTP {r.status_code}")
-    except requests.RequestException as e:
-        return False, repr(e)
+def reachable(url: str, attempts: int = 2) -> tuple[bool, str]:
+    """Проверка доступности источника: два коротких запроса без backoff.
+
+    Отказ прокси (403 на CONNECT) повторять бессмысленно, поэтому повтор только
+    при таймауте (ISS иногда отвечает дольше 15 с на первый запрос).
+    """
+    err = ""
+    for _ in range(attempts):
+        try:
+            r = requests.get(url, timeout=30, headers={"User-Agent": config.USER_AGENT})
+            return (r.status_code < 400, f"HTTP {r.status_code}")
+        except requests.Timeout as e:
+            err = repr(e)
+        except requests.RequestException as e:
+            return False, repr(e)
+    return False, err
 
 
 def today_tag() -> str:

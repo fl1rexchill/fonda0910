@@ -7,11 +7,16 @@ from __future__ import annotations
 
 import io
 import math
+import os
 import sys
+import tempfile
 from pathlib import Path
 
 import pandas as pd
 
+# Все записи (журнал загрузок, сырые файлы) — во временный каталог, не в проект.
+_TMP = tempfile.TemporaryDirectory(prefix="fdr_parsers_")
+os.environ["FDR_WORKDIR"] = _TMP.name
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src import fetch_cbr, fetch_moex  # noqa: E402
 from src.build_dataset import compounded_month_return, calendar_daily  # noqa: E402
@@ -79,22 +84,48 @@ def test_key_rate_html():
             return FakeResp(content=html.encode(), text=html)
     saved = {}
     fetch_cbr.save_raw = lambda df, series, url: saved.setdefault(series, df)
-    fetch_cbr.raw_path = lambda series, ext="csv": Path("/dev/null")
+    fetch_cbr.raw_path = lambda series, ext="csv": Path(_TMP.name) / f"{series}.{ext}"
     fetch_cbr.fetch_key_rate(S(), pd.Timestamp("2022-05-01"), pd.Timestamp("2022-06-30"))
     df = saved["cbr_key_rate"]
     assert df["key_rate"].tolist() == [11.0, 11.0, 9.5] and df["date"].is_monotonic_increasing
 
 
 def test_deposit_xlsx():
-    months = pd.period_range("2022-01", "2024-06", freq="M")
-    head = pd.DataFrame([["Ставки по вкладам физических лиц в рублях", "", ""],
-                         ["", "до востребования", 'до 1 года, кроме "до востребования"']])
-    body = pd.DataFrame({0: [m.to_timestamp() for m in months], 1: 3.0, 2: [8 + i / 10 for i in range(len(months))]})
+    """Макет листа ЦБ: заголовок, двухуровневая шапка (физлица / организации)."""
+    months = ["Январь 2022", "Февраль 2022"] + [f"{m} 2023" for m in
+              ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+               "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]] + [f"{m} 2024" for m in
+              ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+               "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]]
+    title = ("Средневзвешенные процентные ставки по привлеченным кредитными организациями "
+             "вкладам (депозитам) физических лиц и нефинансовых организаций в рублях*")
+    rows = [[title, None, None, None, None, None],
+            ["(в целом по Российской Федерации)"] + [None] * 5,
+            ["% годовых"] + [None] * 5,
+            [None, "Физических лиц, со сроком привлечения", None, None,
+             "Нефинансовых организаций, со сроком привлечения", None],
+            [None, "''до востребова-ния''", "до 1 года, кроме ''до востребова-ния''", "свыше 1 года",
+             "до 1 года, включая ''до востребова-ния''", "свыше 1 года"]]
+    rows += [[m, 3.0, 8 + i / 10, 9.0, 7.0, "-"] for i, m in enumerate(months)]
+    rows += [[None] * 6, ["* сноска"] + [None] * 5]
+    struct = [r[:] for r in rows]
+    struct[0][0] = "Структура объема по привлеченным вкладам физических лиц в рублях"
     buf = io.BytesIO()
     with pd.ExcelWriter(buf) as w:
-        pd.concat([head, body], ignore_index=True).to_excel(w, sheet_name="физлица руб", header=False, index=False)
+        pd.DataFrame(rows).to_excel(w, sheet_name="ставки_руб", header=False, index=False)
+        pd.DataFrame(struct).to_excel(w, sheet_name="cтруктура_руб", header=False, index=False)
     out, desc = fetch_cbr.parse_deposit_xlsx(buf.getvalue())
-    assert len(out) == len(months) and out["month"].iloc[0] == "2022-01" and "кроме" in desc
+    assert len(out) == len(months) and out["month"].iloc[0] == "2022-01"
+    assert out["dep_rate"].iloc[1] == 8.1 and out["dep_rate_long"].iloc[0] == 9.0
+    assert "кроме" in desc and "ставки_руб" in desc
+
+
+def test_month_end_check():
+    from src.build_dataset import pct_change_eom
+    d = pd.DataFrame({"date": pd.to_datetime(["2026-04-30", "2026-05-29", "2026-06-19"]),
+                      "value": [100.0, 101.0, 102.0]})
+    r = pct_change_eom(d, "value")
+    assert math.isclose(r[pd.Period("2026-05", "M")], 1.0) and pd.isna(r[pd.Period("2026-06", "M")])
 
 
 def test_compounding():
