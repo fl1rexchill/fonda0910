@@ -1,12 +1,10 @@
 {
   "done": [
-    "fig2_spread_keyrate.png"
+    "fig1_flows_nav.png",
+    "fig2_spread_keyrate.png",
+    "fig5_h1_coefficients.png"
   ],
   "skipped": [
-    [
-      "fig1_flows_nav.png",
-      "нет данных о потоках и СЧА"
-    ],
     [
       "fig3_mm_vs_bond.png",
       "нет помесячного ряда потоков облигационных фондов"
@@ -14,10 +12,6 @@
     [
       "fig4_reconciliation.png",
       "нет пар значений Мосбиржи и Банка России"
-    ],
-    [
-      "fig5_h1_coefficients.png",
-      "основная регрессия не оценена"
     ]
   ]
 }

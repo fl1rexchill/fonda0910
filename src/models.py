@@ -471,7 +471,18 @@ def run() -> dict:
     out["h1"] = {"coefs": main.to_dict("records"), "n": int(hac.nobs),
                  "r2": ols.rsquared, "r2_adj": ols.rsquared_adj,
                  "period": f"{Y.index.min()}…{Y.index.max()}",
-                 "flow_estimated_share": float(ds.loc[Y.index, "flow_is_estimated"].mean())}
+                 "flow_estimated_share": float(ds.loc[Y.index, "flow_is_estimated"].mean()),
+                 "flow_source": sorted(ds.loc[Y.index, "flow_mm_source"].dropna().unique().tolist()),
+                 "funds_n": (int(ds.loc[Y.index, "mm_funds_n"].max())
+                             if ds.loc[Y.index, "mm_funds_n"].notna().any() else None),
+                 "y_top": [(str(m), float(v)) for m, v in
+                           ds.loc[Y.index, "flow_mm_pct"].nlargest(3).items()],
+                 "flow_ranks": {str(m): int(r) for m, r in
+                                ds.loc[Y.index, "flow_mm"].rank(ascending=False).items()
+                                if str(m) in ("2026-04", "2026-07")},
+                 "peaks": {m: (None if pd.isna(ds.at[pd.Period(m, "M"), "flow_mm"]) else
+                               float(ds.at[pd.Period(m, "M"), "flow_mm"]))
+                           for m in ("2026-04", "2026-07") if pd.Period(m, "M") in ds.index}}
     st.add("H1 OLS-HAC", "ok", f"N={int(hac.nobs)}")
     diag = diagnostics(ols)
     save_table(diag, "h1_diagnostics", "Диагностика остатков основной регрессии H1")
@@ -577,6 +588,10 @@ def robustness(ds, sidx, k, dums, st: Status) -> list[dict]:
          f"spread_dep_L{k}"),
         ("Y = поток, млрд руб.", "flow_mm", h1_terms(k, y="flow_mm"), dums, sidx, f"spread_dep_L{k}"),
     ]
+    if "flow_alt_pct" in ds and ds.loc[sidx, "flow_alt_pct"].notna().any():
+        alt = "+".join(config.ALT_PANEL_TICKERS)
+        variants.append((f"Y: только {alt}", "flow_alt_pct", h1_terms(k, y="flow_alt_pct"), dums, sidx,
+                         f"spread_dep_L{k}"))
     if "flow_mm" in ds and (ds.loc[sidx, "flow_mm"].dropna() > 0).all() and ds.loc[sidx, "flow_mm"].notna().any():
         d2 = ds.assign(log_flow_mm=np.log(ds["flow_mm"]))
         variants.append(("Y = ln(поток)", "log_flow_mm", h1_terms(k, y="log_flow_mm"), dums, sidx,

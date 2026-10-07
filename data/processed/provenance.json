@@ -67,9 +67,9 @@
     "url": "см. source_url в файле"
   },
   "fund_nav_monthly": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "manual",
+    "file": "data/manual/fund_nav_monthly.csv",
+    "download_date": "2026-10-07 (дата изменения файла)",
+    "url": "см. source_url в файле"
   }
 }

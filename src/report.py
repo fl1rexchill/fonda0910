@@ -253,9 +253,15 @@ def results_summary() -> str:
     key = f"spread_dep_L{k}"
     s = _row(h1["coefs"], key)
     sent = []
-    sent.append(f"Основная регрессия H1 оценена по {h1['n']} месячным наблюдениям за "
-                f"{h1['period']} (h1_main_fit.csv, строка «N»); доля месяцев с оценённым, а не "
-                f"наблюдаемым потоком — {fmt(100 * h1['flow_estimated_share'], 0)}% (dataset.csv, flow_is_estimated).")
+    if any("СЧА фондов" in s for s in h1.get("flow_source", [])):
+        sent.append(f"Основная регрессия H1 оценена по {h1['n']} месячным наблюдениям за "
+                    f"{h1['period']} (h1_main_fit.csv, строка «N»). Поток рассчитан по справкам о СЧА "
+                    f"{h1.get('funds_n')} фондов как СЧА(t) − СЧА(t−1)·(пай(t)/пай(t−1)) "
+                    "(dataset.csv, flow_mm_source).")
+    else:
+        sent.append(f"Основная регрессия H1 оценена по {h1['n']} месячным наблюдениям за "
+                    f"{h1['period']} (h1_main_fit.csv, строка «N»); доля месяцев с оценённым, а не "
+                    f"наблюдаемым потоком — {fmt(100 * h1['flow_estimated_share'], 0)}% (dataset.csv, flow_is_estimated).")
     sent.append(f"Лаг спреда выбран по BIC: k = {k} (lag_selection_h1.csv, строка selected = 1).")
     sig = s["p_value"] < 0.05
     sent.append(f"Коэффициент при спреде RUSFAR − ставка по вкладам: {_ci(s)} (h1_main.csv, строка {key}); "
@@ -328,27 +334,69 @@ def _alt_text(res: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _coverage_text() -> str:
+    """Доля фондов выборки в СЧА всех БПИФ денежного рынка по данным ЦБ."""
+    rec_p, ds_p = config.DATA / "reconciliation.csv", config.PROCESSED / "dataset.csv"
+    if not (rec_p.exists() and ds_p.exists()):
+        return ""
+    rec, ds = pd.read_csv(rec_p), pd.read_csv(ds_p)
+    mm = rec[(rec["cbr_category"] == "money_market") & rec["nav_cbr_bln"].notna()]
+    parts = []
+    for _, r in mm.iterrows():
+        m = str(pd.Period(r["period"], freq="Q").asfreq("M", "end"))
+        nav = ds.loc[ds["month"] == m, "nav_mm"]
+        if len(nav) and pd.notna(nav.iloc[0]):
+            parts.append(f"{fmt(100 * nav.iloc[0] / r['nav_cbr_bln'], 0)}% на конец {m} "
+                         f"({fmt(nav.iloc[0], 0)} из {fmt(r['nav_cbr_bln'], 0)} млрд руб. по ЦБ)")
+    return "; ".join(parts)
+
+
 def _limitations(res: dict) -> str:
-    n = res.get("h1", {}).get("n")
-    items = [
+    h1 = res.get("h1", {})
+    n = h1.get("n")
+    br = {b.get("test", ""): b for b in res.get("breaks", [])}
+    n_after = next((int(b["n_after"]) for k, b in br.items() if k.startswith("Чоу") and
+                    pd.notna(b.get("n_after"))), None)
+    items = []
+    if any("СЧА фондов" in s for s in h1.get("flow_source", [])):
+        cov = _coverage_text()
+        reg_p = config.MANUAL / "mm_funds.csv"
+        reg = pd.read_csv(reg_p) if reg_p.exists() else pd.DataFrame(columns=["ticker", "include", "note"])
+        inc = ", ".join(reg.loc[reg["include"] == 1, "ticker"])
+        exc = "; ".join(f"{r.ticker} — {r.note}" for r in reg[reg["include"] != 1].itertuples())
+        items.append(f"Зависимая переменная построена по справкам о СЧА {h1.get('funds_n')} фондов ({inc}), "
+                     "а не по всему рынку фондов денежного рынка."
+                     + (f" Доля этих фондов в СЧА всех БПИФ денежного рынка: {cov}." if cov else "")
+                     + (f" Не включены: {exc}." if exc else "")
+                     + " Выводы относятся к этим фондам.")
+        if h1.get("y_top"):
+            items.append("В начале выборки фонды были малы, поэтому приток в % СЧА очень велик: "
+                         + ", ".join(f"{m}: {fmt(v, 0)}%" for m, v in h1["y_top"])
+                         + ". Эти месяцы сильно влияют на оценки (см. вариант «Только 2024–2026» "
+                           "и тест Харке–Бера).")
+        pk = {m: v for m, v in h1.get("peaks", {}).items() if v is not None}
+        if pk and h1.get("flow_ranks"):
+            items.append("Дамми апреля и июля 2026 г. заданы как месяцы рыночных пиков (по ТЗ). В фондах "
+                         "выборки поток в эти месяцы: " +
+                         ", ".join(f"{m}: {fmt(v, 1)} млрд руб. ({h1['flow_ranks'].get(m)}-е место по величине "
+                                   f"из {h1['n']} месяцев)" for m, v in pk.items()) + ".")
+    items += [
         f"Короткая выборка ({n if n else 'около 44'} месячных наблюдений). Мощность тестов "
         "низкая, оценки чувствительны к отдельным месяцам; смотреть нужно на доверительные "
         "интервалы, а не только на p-значения.",
         "Стандартные ошибки Ньюи–Уэста при N < 50 могут быть смещены вниз; "
         "асимптотические p-значения приблизительны.",
-        "ADF и KPSS на 40–45 наблюдениях слабо различают единичный корень и высокую "
+        "ADF и KPSS на таких коротких рядах слабо различают единичный корень и высокую "
         "персистентность, поэтому выводы о стационарности предварительные.",
         "Лаг спреда выбирался по информационному критерию на тех же данных, на которых "
         "оценивается модель; p-значения не скорректированы на этот выбор.",
         "Дамми пиковых месяцев поглощают ровно одно наблюдение каждая. Месяцы пиков "
         "фактически исключаются из оценки остальных коэффициентов (ср. вариант «Без дамми пиков»).",
-        "Тест Чоу в июне 2026 г.: после точки 4 наблюдения (июнь–сентябрь), поэтому "
-        "проверка полного сдвига возможна только в прогнозном варианте, а частичный сдвиг "
+        f"Тест Чоу в {config.CHOW_BREAK}: после точки {n_after if n_after is not None else 'мало'} "
+        "наблюдений, поэтому полный сдвиг проверяется только в прогнозном варианте, а частичный "
         "оценивается по малому числу точек.",
-        "Потоки Мосбиржи и Банка России различаются по охвату и методике (см. data_sources.md, "
-        "раздел 6); результаты относятся к выборке фондов Мосбиржи.",
-        "Если часть потоков оценена по ΔСЧА, ошибка в r (доходность фондов, комиссии) "
-        "переходит в зависимую переменную.",
+        "Потоки Мосбиржи, справок УК и Банка России различаются по охвату и методике "
+        "(см. data_sources.md, раздел 6).",
         "Регрессии описывают условные корреляции и не идентифицируют причинный эффект: "
         "спред и приток могут зависеть от общих шоков (решения по ключевой ставке).",
     ]

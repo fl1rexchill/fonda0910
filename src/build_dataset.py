@@ -54,7 +54,8 @@ DERIVATIONS = [
     "Если сводного ряда Мосбиржи нет, поток считается по СЧА отдельных фондов "
     "(`data/manual/fund_nav_monthly.csv`) для фиксированного списка фондов из "
     "`data/manual/mm_funds.csv`: поток фонда = СЧА(t) − СЧА(t−1)·(1 + r/100), где r — "
-    "месячная доходность биржевой цены этого фонда (ISS); если цены нет — RUSFARIND. В месяц "
+    "изменение расчётной стоимости пая по тем же справкам о СЧА; если её нет — биржевой цены "
+    "фонда (ISS), если нет и её — RUSFARIND. В месяц "
     "запуска фонда поток равен его СЧА. Сумма по фондам считается только если СЧА есть у "
     "всех фондов списка, запущенных к этому месяцу, иначе месяц пропускается: так смена "
     "состава выборки не превращается в «приток». Интерполяция СЧА не применяется. "
@@ -64,7 +65,7 @@ DERIVATIONS = [
 
 # Фиксированная схема dataset.csv: колонки есть всегда, даже если ряд не загружен.
 COLUMNS = ["flow_mm", "nav_mm", "flow_mm_pct", "flow_is_estimated", "r_source",
-           "flow_mm_source", "mm_funds_n",
+           "flow_mm_source", "mm_funds_n", "flow_alt", "nav_alt", "flow_alt_pct",
            "flow_bond", "nav_bond", "flow_bond_pct", "flow_bond_source",
            "rusfar_avg", "rusfar_ret_calc", "rusfarind_ret", "mm_etf_ret", "mm_etf_n",
            "key_rate_avg", "key_rate_eom", "d_key_rate", "dep_rate", "dep_rate_long",
@@ -254,6 +255,12 @@ def build() -> pd.DataFrame:
     panel = fund_panel(ds.index, navf, registry, fund_rets,
                        ds["rusfarind_ret"] if "rusfarind_ret" in ds else pd.Series(np.nan, index=ds.index))
     _add_flows(ds, moex, cbr, panel)
+    if registry is not None and navf is not None:
+        alt_reg = registry[registry["ticker"].isin(config.ALT_PANEL_TICKERS)].assign(include=1)
+        alt = fund_panel(ds.index, navf, alt_reg, fund_rets, ds["rusfarind_ret"])
+        ds["flow_alt"] = pd.to_numeric(alt["flow"], errors="coerce")
+        ds["nav_alt"] = pd.to_numeric(alt["nav"], errors="coerce")
+        ds["flow_alt_pct"] = ds["flow_alt"] / ds["nav_alt"].shift(1) * 100
 
     # Дамми
     dmy = pd.read_csv(config.MANUAL / "dummies.csv")
@@ -299,17 +306,25 @@ def fund_panel(index: pd.PeriodIndex, navf: pd.DataFrame | None, registry: pd.Da
     if navf is None or registry is None or registry.empty:
         return out
     reg = registry[registry["include"] == 1]
-    funds = [(r.ticker, pd.Period(str(r.launch_month), freq="M")) for r in reg.itertuples()]
+    # пустой launch_month: фонд работал до начала данных (месяцы без СЧА выпадают)
+    funds = [(r.ticker, pd.Period(str(r.launch_month), freq="M") if pd.notna(r.launch_month) and
+              str(r.launch_month).strip() else None) for r in reg.itertuples()]
     d = navf.assign(month=pd.PeriodIndex(navf["month"].astype(str), freq="M"))
     if d.duplicated(["month", "ticker"]).any():
         raise ValueError("дубли (month, ticker) в fund_nav_monthly.csv")
     nav = d.pivot(index="month", columns="ticker", values="nav_bln_eom").astype(float).reindex(index)
+    # доходность пая по самим справкам о СЧА (точнее биржевой цены), если цена пая указана
+    if "unit_price" in d and d["unit_price"].notna().any():
+        px = d.pivot(index="month", columns="ticker", values="unit_price").astype(float).reindex(index)
+        own = (px / px.shift(1) - 1) * 100
+    else:
+        own = pd.DataFrame(index=index)
 
     def get(frame, t, f):
         return frame.at[t, f] if (f in frame.columns and t in frame.index) else np.nan
 
     for t in index:
-        active = [(f, launch) for f, launch in funds if launch <= t]
+        active = [(f, launch) for f, launch in funds if launch is None or launch <= t]
         if not active:
             continue
         navs = [get(nav, t, f) for f, _ in active]
@@ -323,7 +338,9 @@ def fund_panel(index: pd.PeriodIndex, navf: pd.DataFrame | None, registry: pd.Da
                 srcs.add("запуск фонда")
                 continue
             n_p = get(nav, t - 1, f)
-            r, src = get(fund_rets, t, f), "цена фонда (ISS)"
+            r, src = get(own, t, f), "цена пая по справкам о СЧА"
+            if pd.isna(r):
+                r, src = get(fund_rets, t, f), "цена фонда (ISS)"
             if pd.isna(r):
                 r, src = fallback_r.get(t, np.nan), "RUSFARIND (нет цены фонда)"
             if pd.isna(n_p) or pd.isna(r):

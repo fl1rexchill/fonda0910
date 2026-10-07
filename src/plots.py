@@ -70,23 +70,35 @@ def fig1_flows_nav(ds, done, skipped) -> None:
     fig, (a1, a2) = plt.subplots(2, 1, figsize=(WIDTH_IN, 4.6), sharex=True,
                                  gridspec_kw={"height_ratios": [3, 2]})
     x = _ts(d.index)
-    est = d["flow_is_estimated"].fillna(0).astype(bool)
-    a1.bar(x[~est], d["flow_mm"][~est], width=20, color=MID, edgecolor="white", lw=0.5,
-           label="Нетто-приток (данные Мосбиржи)")
-    if est.any():
-        a1.bar(x[est], d["flow_mm"][est], width=20, color="white", edgecolor=INK, lw=0.6,
-               hatch="////", label="Нетто-приток (оценка по ΔСЧА)")
+    src = d["flow_mm_source"].dropna().astype(str) if "flow_mm_source" in d else pd.Series(dtype=str)
+    if src.str.contains("СЧА фондов").any():
+        # ряд по справкам УК о СЧА отдельных фондов
+        reg_p = config.MANUAL / "mm_funds.csv"
+        funds = (", ".join(pd.read_csv(reg_p).query("include == 1")["ticker"])
+                 if reg_p.exists() else "")
+        a1.bar(x, d["flow_mm"], width=20, color=MID, edgecolor="white", lw=0.5,
+               label=f"Нетто-приток по справкам УК о СЧА ({funds})")
+    else:
+        est = d["flow_is_estimated"].fillna(0).astype(bool)
+        if (~est & d["flow_mm"].notna()).any():
+            a1.bar(x[~est], d["flow_mm"][~est], width=20, color=MID, edgecolor="white", lw=0.5,
+                   label="Нетто-приток (данные Мосбиржи)")
+        if est.any():
+            a1.bar(x[est], d["flow_mm"][est], width=20, color="white", edgecolor=INK, lw=0.6,
+                   hatch="////", label="Нетто-приток (оценка по ΔСЧА)")
     a1.axhline(0, color=INK, lw=0.6)
     a1.set_ylabel("млрд руб.")
     a1.set_title("Нетто-приток в фонды денежного рынка", loc="left")
     _mark_peaks(a1, d)
+    lo, hi = a1.get_ylim()
+    a1.set_ylim(lo, hi + 0.2 * (hi - lo))  # место для легенды над столбцами
     a1.legend(loc="upper left")
     a2.plot(x, d["nav_mm"], color=INK, lw=1.6)
     a2.set_ylabel("млрд руб.")
     a2.set_title("СЧА фондов денежного рынка на конец месяца", loc="left")
     _mark_peaks(a2, d)
     _date_axis(a2)
-    fig.text(0.01, -0.02, "Пунктир — месяцы пиков притока (апрель и июль 2026 г.).",
+    fig.text(0.01, -0.02, "Пунктир — апрель и июль 2026 г. (дамми-переменные модели).",
              fontsize=7, color=MID)
     fig.tight_layout()
     _save(fig, "fig1_flows_nav.png", done)
