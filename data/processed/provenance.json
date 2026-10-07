@@ -1,57 +1,58 @@
 {
   "moex_rusfar": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/moex_rusfar_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFAR.json?from=2022-06-01&till=2026-09-30"
   },
   "moex_rusfarind": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/moex_rusfarind_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFARIND.json?from=2022-06-01&till=2026-09-30"
   },
   "moex_imoex": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/moex_imoex_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX.json?from=2022-06-01&till=2026-09-30"
   },
   "moex_zcyc": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/moex_zcyc_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://iss.moex.com/iss/engines/stock/zcyc.json?date=YYYY-MM-DD"
   },
   "moex_mm_etf_prices": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/moex_mm_etf_prices_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/<ticker>.json"
   },
   "cbr_key_rate": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/cbr_key_rate_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://www.cbr.ru/hd_base/KeyRate/?UniDbQuery.Posted=True&UniDbQuery.From=01.06.2022&UniDbQuery.To=30.09.2026"
   },
   "cbr_fx_usd": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/cbr_fx_usd_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01235"
   },
   "cbr_fx_cny": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/cbr_fx_cny_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01375"
   },
   "cbr_dep_rate": {
-    "origin": "missing",
-    "file": "",
-    "download_date": "",
-    "url": ""
+    "origin": "auto",
+    "file": "data/raw/cbr_dep_rate_20261007.csv",
+    "download_date": "2026-10-07",
+    "url": "https://www.cbr.ru/vfs/statistics/pdko/int_rat/deposits.xlsx",
+    "series_name": "лист «ставки_руб», столбец «до 1 года, кроме ''до востребова-ния'' 6.03 5.94 5.91 6.04 6.06 6.21 6.17 6.19 6.27 6.5»"
   },
   "moex_fund_flows": {
     "origin": "missing",

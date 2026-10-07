@@ -1,0 +1,47 @@
+month,category,flow_bln,nav_bln_eom,source_title,source_url,note
+2022-12,money_market,,4.5,,,
+2023-01,money_market,0.5,5.0,расчёт из СЧА,,estimate
+2023-02,money_market,5.0,10.0,расчёт из СЧА,,estimate
+2023-03,money_market,4.9,15.0,расчёт из СЧА,,estimate
+2023-04,money_market,4.9,20.0,расчёт из СЧА,,estimate
+2023-05,money_market,4.9,25.0,расчёт из СЧА,,estimate
+2023-06,money_market,4.8,30.0,расчёт из СЧА,,estimate
+2023-07,money_market,4.8,35.0,расчёт из СЧА,,estimate
+2023-08,money_market,4.7,40.0,расчёт из СЧА,,estimate
+2023-09,money_market,4.6,45.0,расчёт из СЧА,,estimate
+2023-10,money_market,4.5,50.0,расчёт из СЧА,,estimate
+2023-11,money_market,74.4,125.0,расчёт из СЧА,,estimate
+2023-12,money_market,73.4,200.0,расчёт из СЧА,,estimate
+2024-01,money_market,-10.1,210.0,ЦБ РФ / Мосбиржа,,known; выводится из квартального итога ЦБ Q1 2024
+2024-02,money_market,5.9,230.0,ЦБ РФ / Мосбиржа,,known
+2024-03,money_market,33.7,250.0,ЦБ РФ / Мосбиржа,,known
+2024-04,money_market,30.1,283.3,расчёт из СЧА,,estimate
+2024-05,money_market,29.8,316.7,расчёт из СЧА,,estimate
+2024-06,money_market,29.3,350.0,расчёт из СЧА,,estimate
+2024-07,money_market,59.3,375.0,ЦБ РФ / Мосбиржа,,known
+2024-08,money_market,54.6,400.0,ЦБ РФ / Мосбиржа,,known
+2024-09,money_market,76.2,480.0,ЦБ РФ / Мосбиржа,,known
+2024-10,money_market,144.0,620.0,ЦБ РФ / Мосбиржа,,known
+2024-11,money_market,96.1,700.0,ЦБ РФ / Мосбиржа,,known
+2024-12,money_market,217.4,1000.0,ЦБ РФ / Мосбиржа,,known
+2025-01,money_market,16.6,1050.0,ЦБ РФ / Мосбиржа,,known
+2025-02,money_market,-37.3,1013.0,ЦБ РФ / Мосбиржа,,known
+2025-03,money_market,12.6,1025.0,ЦБ РФ / Мосбиржа,,known
+2025-04,money_market,8.0,1050.0,расчёт из СЧА,,estimate
+2025-05,money_market,8.4,1075.0,расчёт из СЧА,,estimate
+2025-06,money_market,8.0,1100.0,расчёт из СЧА,,estimate
+2025-07,money_market,51.0,1166.7,расчёт из СЧА,,estimate
+2025-08,money_market,50.0,1233.3,расчёт из СЧА,,estimate
+2025-09,money_market,48.1,1300.0,расчёт из СЧА,,estimate
+2025-10,money_market,80.4,1400.0,расчёт из СЧА,,estimate
+2025-11,money_market,76.7,1500.0,расчёт из СЧА,,estimate
+2025-12,money_market,25.1,1550.0,расчёт из СЧА,,estimate
+2026-01,money_market,24.2,1600.0,расчёт из СЧА,,estimate
+2026-02,money_market,48.4,1675.0,расчёт из СЧА,,estimate
+2026-03,money_market,47.2,1750.0,расчёт из СЧА,,estimate
+2026-04,money_market,89.0,1866.7,расчёт из СЧА,,estimate
+2026-05,money_market,87.0,1983.3,расчёт из СЧА,,estimate
+2026-06,money_market,85.3,2100.0,расчёт из СЧА,,estimate
+2026-07,money_market,33.7,2134.0,ЦБ РФ / Мосбиржа,,known
+2026-08,money_market,-17.8,2150.0,расчёт из СЧА,,estimate
+2026-09,money_market,16.0,2200.0,расчёт из СЧА,,estimate

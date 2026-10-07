@@ -1,0 +1,15 @@
+period,period_type,category,fund_scope,flow_bln,nav_bln_eop,source_title,source_url,note
+Q1 2023,quarterly,БПИФ,all_BPIF,2.5,,ЦБ РФ Обзор ПИФ Q1 2023,https://cbr.ru/Collection/Collection/File/44017/rewiew_pif_aif_23Q1.pdf,Net inflow all BPIF; money market not separately disclosed
+Q2 2023,quarterly,БПИФ,all_BPIF,4.6,,ЦБ РФ Обзор ПИФ Q2 2023,https://cbr.ru/Collection/Collection/File/46283/rewiew_pif_aif_23Q2.pdf,Net inflow all BPIF
+Q3 2023,quarterly,БПИФ,all_BPIF,41.8,,ЦБ РФ Обзор УК Q3 2023,https://cbr.ru/Collection/Collection/File/46625/rewiew_uk_23Q3.pdf,Estimated: total flow minus ЗПИФ/ИПИФ/ОПИФ flows
+Q4 2023,quarterly,БПИФ,all_BPIF,143.9,,ЦБ РФ Обзор УК Q4 2023,https://cbr.ru/Collection/Collection/File/48954/rewiew_uk_23Q4.pdf,Money market = main driver
+Q1 2024,quarterly,БПИФ,all_BPIF,29.5,,ЦБ РФ Обзор УК Q1 2024,https://cbr.ru/Collection/Collection/File/49208/rewiew_uk_24Q1.pdf,"Feb: +5.9, Mar: +33.7 (monthly breakdown in review)"
+Q2 2024,quarterly,БПИФ,all_BPIF,51.7,,ЦБ РФ Обзор УК Q2 2024,https://cbr.ru/Collection/Collection/File/50577/rewiew_uk_24Q2.pdf,Special section on money market BPIF
+Q3 2024,quarterly,БПИФ,all_BPIF,190.1,,ЦБ РФ Обзор УК Q3 2024,https://cbr.ru/Collection/Collection/File/54852/rewiew_uk_24Q3.pdf,"Jul: +59.3, Aug: +54.6, Sep: +76.2 (monthly breakdown)"
+Q4 2024,quarterly,БПИФ,all_BPIF,457.5,1000,ЦБ РФ Обзор УК Q4 2024,https://cbr.ru/Collection/Collection/File/55183/rewiew_uk_24Q4.pdf,"Oct: +144.0, Nov: +96.1, Dec: +217.4. СЧА money market ~1 trln (87% of BPIF)"
+Q1 2025,quarterly,БПИФ,all_BPIF,-8.0,,ЦБ РФ Обзор УК Q1 2025,https://cbr.ru/Collection/Collection/File/55935/rewiew_uk_25Q1.pdf,"Jan: +16.6, Feb: -37.3, Mar: +12.6 (first monthly outflow)"
+Q2 2025,quarterly,БПИФ,all_BPIF,80.5,,ЦБ РФ Обзор УК Q2 2025,https://cbr.ru/Collection/Collection/File/57205/rewiew_uk_25Q2.pdf,Recovery after Q1 outflow
+Q3 2025,quarterly,БПИФ,all_BPIF,114.9,,ЦБ РФ Обзор УК Q3 2025,https://cbr.ru/Collection/Collection/File/59449/rewiew_uk_25Q3.pdf,
+Q4 2025,quarterly,БПИФ,all_BPIF,258.3,1900,ЦБ РФ Обзор УК Q4 2025,https://cbr.ru/Collection/Collection/File/59736/rewiew_uk_25Q4.pdf,СЧА BPIF ~1.9 trln
+Q1 2026,quarterly,БПИФ,all_BPIF,256.4,2200,ЦБ РФ Обзор УК Q1 2026,https://cbr.ru/Collection/Collection/File/62033/rewiew_uk_26Q1.pdf,СЧА BPIF ~2.2 trln
+Q2 2026,quarterly,БПИФ,all_BPIF,196.0,2400,ЦБ РФ Обзор УК Q2 2026,https://cbr.ru/Collection/Collection/File/62329/rewiew_uk_26Q2.pdf,СЧА BPIF ~2.4 trln

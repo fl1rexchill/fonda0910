@@ -1,6 +1,6 @@
 # Источники данных
 
-Сформировано: 2026-10-06. Модельный период: 2023-01…2026-09; данные загружаются с 2022-06 для лагов и разностей.
+Сформировано: 2026-10-07. Модельный период: 2023-01…2026-09; данные загружаются с 2022-06 для лагов и разностей.
 
 ## 1. Ряды, источники и определения
 
@@ -11,39 +11,27 @@
 | flow_mm_pct | расчёт | — | расчёт | — | — | flow_mm / nav_mm(t−1) × 100, % |
 | flow_bond | Банк России, статистика ПИФ по категориям (ручной ввод); при отсутствии месячных данных ЦБ — Мосбиржа | source_url в data/manual/cbr_fund_flows.csv | НЕТ ДАННЫХ | — | — | Нетто-поток в облигационные фонды, млрд руб. (источник по факту — колонка flow_bond_source) |
 | flow_bond_pct | расчёт | — | расчёт | — | — | flow_bond / nav_bond(t−1) × 100, % |
-| rusfar_avg | Московская биржа, ISS API, индекс RUSFAR (overnight) | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFAR.json | НЕТ ДАННЫХ | — | — | Среднее дневных значений за месяц, % годовых |
-| rusfarind_ret | Московская биржа, ISS API, индекс RUSFARIND | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFARIND.json | НЕТ ДАННЫХ | — | — | Месячное изменение индекса, % (ряд с 31.01.2025) |
-| rusfar_ret_calc | расчёт по RUSFAR | — | НЕТ ДАННЫХ | — | — | Капитализация RUSFAR overnight за месяц, % (справочный ряд) |
-| mm_etf_ret | Московская биржа, ISS API, цены закрытия БПИФ LQDT, AKMM, SBMM, TMON | https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/<тикер>.json | НЕТ ДАННЫХ | — | — | Средняя (равновзвешенная) месячная доходность цен фондов, %; используется только как r при оценке потока |
-| key_rate_avg / key_rate_eom | Банк России, официальная страница «Ключевая ставка Банка России» | https://www.cbr.ru/hd_base/KeyRate/ | НЕТ ДАННЫХ | — | — | Среднее по календарным дням месяца и значение на последний день месяца, % |
-| d_key_rate | расчёт | — | НЕТ ДАННЫХ | — | — | key_rate_eom(t) − key_rate_eom(t−1), п.п. |
-| dep_rate | Банк России, средневзвешенные процентные ставки по вкладам физлиц в рублях | https://www.cbr.ru/statistics/bank_sector/int_rat/ | НЕТ ДАННЫХ | — | — | Ставка по вкладам сроком до 1 года, кроме «до востребования», % годовых (точное название ряда — ниже) |
+| rusfar_avg | Московская биржа, ISS API, индекс RUSFAR (overnight) | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFAR.json | автозагрузка | data/raw/moex_rusfar_20261007.csv | 2026-10-07 | Среднее дневных значений за месяц, % годовых |
+| rusfarind_ret | Московская биржа, ISS API, индекс RUSFARIND | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFARIND.json | автозагрузка | data/raw/moex_rusfarind_20261007.csv | 2026-10-07 | Месячное изменение индекса, % (ряд с 31.01.2025) |
+| rusfar_ret_calc | расчёт по RUSFAR | — | автозагрузка | data/raw/moex_rusfar_20261007.csv | 2026-10-07 | Капитализация RUSFAR overnight за месяц, % (справочный ряд) |
+| mm_etf_ret | Московская биржа, ISS API, цены закрытия БПИФ LQDT, AKMM, SBMM, TMON | https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/<тикер>.json | автозагрузка | data/raw/moex_mm_etf_prices_20261007.csv | 2026-10-07 | Средняя (равновзвешенная) месячная доходность цен фондов, %; используется только как r при оценке потока |
+| key_rate_avg / key_rate_eom | Банк России, официальная страница «Ключевая ставка Банка России» | https://www.cbr.ru/hd_base/KeyRate/ | автозагрузка | data/raw/cbr_key_rate_20261007.csv | 2026-10-07 | Среднее по календарным дням месяца и значение на последний день месяца, % |
+| d_key_rate | расчёт | — | автозагрузка | data/raw/cbr_key_rate_20261007.csv | 2026-10-07 | key_rate_eom(t) − key_rate_eom(t−1), п.п. |
+| dep_rate | Банк России, средневзвешенные процентные ставки по вкладам физлиц в рублях | https://www.cbr.ru/statistics/bank_sector/int_rat/ | автозагрузка | data/raw/cbr_dep_rate_20261007.csv | 2026-10-07 | Ставка по вкладам сроком до 1 года, кроме «до востребования», % годовых (точное название ряда — ниже) |
 | spread_dep | расчёт | — | расчёт | — | — | rusfar_avg − dep_rate, п.п. |
 | spread_key | расчёт | — | расчёт | — | — | rusfar_avg − key_rate_avg, п.п. |
-| ofz_slope | Московская биржа, ISS API, кривая бескупонной доходности ОФЗ | https://iss.moex.com/iss/engines/stock/zcyc.json?date=YYYY-MM-DD | НЕТ ДАННЫХ | — | — | Доходность 1 год − 3 месяца на последний торговый день месяца, п.п. |
-| imoex_ret / imoex_vol | Московская биржа, ISS API, индекс IMOEX | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX.json | НЕТ ДАННЫХ | — | — | Месячная доходность, %; реализованная волатильность, % годовых |
-| fx_vol | Банк России, официальные курсы (USD, R01235) | https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=dd/mm/yyyy&date_req2=dd/mm/yyyy&VAL_NM_RQ=R01235 | НЕТ ДАННЫХ | — | — | Реализованная волатильность официального курса USD/RUB, % годовых |
-| fx_vol_cny | Банк России, официальные курсы (CNY, R01375) | https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=dd/mm/yyyy&date_req2=dd/mm/yyyy&VAL_NM_RQ=R01375 | НЕТ ДАННЫХ | — | — | То же для CNY/RUB (запасной контроль) |
+| ofz_slope | Московская биржа, ISS API, кривая бескупонной доходности ОФЗ | https://iss.moex.com/iss/engines/stock/zcyc.json?date=YYYY-MM-DD | автозагрузка | data/raw/moex_zcyc_20261007.csv | 2026-10-07 | Доходность 1 год − 3 месяца на последний торговый день месяца, п.п. |
+| imoex_ret / imoex_vol | Московская биржа, ISS API, индекс IMOEX | https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX.json | автозагрузка | data/raw/moex_imoex_20261007.csv | 2026-10-07 | Месячная доходность, %; реализованная волатильность, % годовых |
+| fx_vol | Банк России, официальные курсы (USD, R01235) | https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=dd/mm/yyyy&date_req2=dd/mm/yyyy&VAL_NM_RQ=R01235 | автозагрузка | data/raw/cbr_fx_usd_20261007.csv | 2026-10-07 | Реализованная волатильность официального курса USD/RUB, % годовых |
+| fx_vol_cny | Банк России, официальные курсы (CNY, R01375) | https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=dd/mm/yyyy&date_req2=dd/mm/yyyy&VAL_NM_RQ=R01375 | автозагрузка | data/raw/cbr_fx_cny_20261007.csv | 2026-10-07 | То же для CNY/RUB (запасной контроль) |
 
-Ряд ставки по вкладам: _не задан (нет данных)_.
+Ряд ставки по вкладам: лист «ставки_руб», столбец «до 1 года, кроме ''до востребова-ния'' 6.03 5.94 5.91 6.04 6.06 6.21 6.17 6.19 6.27 6.5».
 
 Приоритет: автоматическая выгрузка из `data/raw/` (в имени файла дата загрузки), при её отсутствии ручной файл из `data/manual/`. Агрегаторы и новостные сайты как источник рядов не используются.
 
 ## 2. Недоступные источники при последнем запуске
 
-| Ряд | URL | Ошибка | Время |
-|---|---|---|---|
-| moex_rusfar | https://iss.moex.com/iss | ISS недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='iss.moex.com', port=443): Max retries exceeded with url: /iss/index.json (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| moex_rusfarind | https://iss.moex.com/iss | ISS недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='iss.moex.com', port=443): Max retries exceeded with url: /iss/index.json (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| moex_imoex | https://iss.moex.com/iss | ISS недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='iss.moex.com', port=443): Max retries exceeded with url: /iss/index.json (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| moex_mm_etf_prices | https://iss.moex.com/iss | ISS недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='iss.moex.com', port=443): Max retries exceeded with url: /iss/index.json (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| moex_zcyc | https://iss.moex.com/iss | ISS недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='iss.moex.com', port=443): Max retries exceeded with url: /iss/index.json (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| cbr_key_rate | https://www.cbr.ru/ | cbr.ru недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| cbr_fx_usd | https://www.cbr.ru/ | cbr.ru недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| cbr_fx_cny | https://www.cbr.ru/ | cbr.ru недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-| cbr_dep_rate | https://www.cbr.ru/ | cbr.ru недоступен: ProxyError(MaxRetryError("HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))")) | 2026-10-06T07:48:50 |
-
-Что скачать вручную и куда положить, описано в `data/manual/README.md`.
+Все автоматические загрузки успешны.
 
 ## 3. Расчётные преобразования
 
@@ -70,18 +58,18 @@
 | flow_mm_pct | 45 | 45 | 2023-01…2026-09 |
 | flow_bond | 45 | 45 | 2023-01…2026-09 |
 | flow_bond_pct | 45 | 45 | 2023-01…2026-09 |
-| rusfar_avg | 45 | 45 | 2023-01…2026-09 |
-| rusfarind_ret | 45 | 45 | 2023-01…2026-09 |
-| key_rate_avg | 45 | 45 | 2023-01…2026-09 |
-| key_rate_eom | 45 | 45 | 2023-01…2026-09 |
-| d_key_rate | 45 | 45 | 2023-01…2026-09 |
-| dep_rate | 45 | 45 | 2023-01…2026-09 |
-| spread_dep | 45 | 45 | 2023-01…2026-09 |
-| spread_key | 45 | 45 | 2023-01…2026-09 |
-| ofz_slope | 45 | 45 | 2023-01…2026-09 |
-| imoex_ret | 45 | 45 | 2023-01…2026-09 |
-| imoex_vol | 45 | 45 | 2023-01…2026-09 |
-| fx_vol | 45 | 45 | 2023-01…2026-09 |
+| rusfar_avg | 45 | 0 |  |
+| rusfarind_ret | 45 | 0 |  |
+| key_rate_avg | 45 | 0 |  |
+| key_rate_eom | 45 | 0 |  |
+| d_key_rate | 45 | 0 |  |
+| dep_rate | 45 | 2 | 2026-08…2026-09 |
+| spread_dep | 45 | 2 | 2026-08…2026-09 |
+| spread_key | 45 | 0 |  |
+| ofz_slope | 45 | 0 |  |
+| imoex_ret | 45 | 0 |  |
+| imoex_vol | 45 | 0 |  |
+| fx_vol | 45 | 0 |  |
 
 Наблюдения с пропуском в любой переменной спецификации исключаются из соответствующей регрессии (listwise). Число наблюдений указано в каждой таблице.
 

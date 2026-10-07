@@ -8,3 +8,26 @@ run_ts,series,status,rows,file,url,error
 2026-10-06T07:48:50,cbr_fx_usd,failed,0,,https://www.cbr.ru/,"cbr.ru недоступен: ProxyError(MaxRetryError(""HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))""))"
 2026-10-06T07:48:50,cbr_fx_cny,failed,0,,https://www.cbr.ru/,"cbr.ru недоступен: ProxyError(MaxRetryError(""HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))""))"
 2026-10-06T07:48:50,cbr_dep_rate,failed,0,,https://www.cbr.ru/,"cbr.ru недоступен: ProxyError(MaxRetryError(""HTTPSConnectionPool(host='www.cbr.ru', port=443): Max retries exceeded with url: / (Caused by ProxyError('Unable to connect to proxy', OSError('Tunnel connection failed: 403 Forbidden')))""))"
+2026-10-07T12:40:44,moex_rusfar,failed,0,,https://iss.moex.com/iss,"ISS недоступен: ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='iss.moex.com', port=443): Read timed out. (read timeout=15)""))"
+2026-10-07T12:40:44,moex_rusfarind,failed,0,,https://iss.moex.com/iss,"ISS недоступен: ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='iss.moex.com', port=443): Read timed out. (read timeout=15)""))"
+2026-10-07T12:40:44,moex_imoex,failed,0,,https://iss.moex.com/iss,"ISS недоступен: ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='iss.moex.com', port=443): Read timed out. (read timeout=15)""))"
+2026-10-07T12:40:44,moex_mm_etf_prices,failed,0,,https://iss.moex.com/iss,"ISS недоступен: ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='iss.moex.com', port=443): Read timed out. (read timeout=15)""))"
+2026-10-07T12:40:44,moex_zcyc,failed,0,,https://iss.moex.com/iss,"ISS недоступен: ReadTimeout(ReadTimeoutError(""HTTPSConnectionPool(host='iss.moex.com', port=443): Read timed out. (read timeout=15)""))"
+2026-10-07T12:40:45,cbr_key_rate,ok,1104,data/raw/cbr_key_rate_20261007.csv,https://www.cbr.ru/hd_base/KeyRate/?UniDbQuery.Posted=True&UniDbQuery.From=01.06.2022&UniDbQuery.To=30.09.2026,
+2026-10-07T12:40:46,cbr_fx_usd,ok,1076,data/raw/cbr_fx_usd_20261007.csv,https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01235,
+2026-10-07T12:40:46,cbr_fx_cny,ok,1076,data/raw/cbr_fx_cny_20261007.csv,https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01375,
+2026-10-07T12:40:46,cbr_dep_rate,ok,151,data/raw/cbr_dep_rate_20261007.csv,https://www.cbr.ru/vfs/statistics/pdko/int_rat/deposits.xlsx,
+2026-10-07T12:41:06,moex_rusfar,ok,1069,data/raw/moex_rusfar_20261007.csv,https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFAR.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:07,moex_rusfarind,ok,1069,data/raw/moex_rusfarind_20261007.csv,https://iss.moex.com/iss/history/engines/stock/markets/index/securities/RUSFARIND.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:08,moex_imoex,ok,1104,data/raw/moex_imoex_20261007.csv,https://iss.moex.com/iss/history/engines/stock/markets/index/securities/IMOEX.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:08,moex_etf_LQDT,ok,995,,https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/LQDT.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:09,moex_etf_AKMM,ok,1001,,https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/AKMM.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:10,moex_etf_SBMM,ok,1031,,https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/SBMM.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:11,moex_etf_TMON,ok,749,,https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/TMON.json?from=2022-06-01&till=2026-09-30,
+2026-10-07T12:41:11,moex_mm_etf_prices,ok,3776,data/raw/moex_mm_etf_prices_20261007.csv,https://iss.moex.com/iss/history/engines/stock/markets/shares/boards/TQTF/securities/<ticker>.json,
+2026-10-07T12:41:15,moex_zcyc,ok,52,data/raw/moex_zcyc_20261007.csv,https://iss.moex.com/iss/engines/stock/zcyc.json?date=YYYY-MM-DD,
+2026-10-07T12:41:16,cbr_key_rate,ok,1104,data/raw/cbr_key_rate_20261007.csv,https://www.cbr.ru/hd_base/KeyRate/?UniDbQuery.Posted=True&UniDbQuery.From=01.06.2022&UniDbQuery.To=30.09.2026,
+2026-10-07T12:41:17,cbr_fx_usd,ok,1076,data/raw/cbr_fx_usd_20261007.csv,https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01235,
+2026-10-07T12:41:17,cbr_fx_cny,ok,1076,data/raw/cbr_fx_cny_20261007.csv,https://www.cbr.ru/scripts/XML_dynamic.asp?date_req1=01/06/2022&date_req2=30/09/2026&VAL_NM_RQ=R01375,
+2026-10-07T12:41:17,cbr_dep_rate,ok,151,data/raw/cbr_dep_rate_20261007.csv,https://www.cbr.ru/vfs/statistics/pdko/int_rat/deposits.xlsx,
+2026-10-07T12:44:07,cbr_key_rate,failed,0,,https://www.cbr.ru/hd_base/KeyRate/?UniDbQuery.Posted=True&UniDbQuery.From=01.05.2022&UniDbQuery.To=30.06.2022,"FileNotFoundError(2, 'No such file or directory')"
