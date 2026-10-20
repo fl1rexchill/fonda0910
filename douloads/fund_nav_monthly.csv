@@ -1,0 +1,151 @@
+month,ticker,nav_bln,is_estimate,source
+2023-01,LQDT,4.5,False,direct from UK/investfunds.ru
+2023-02,LQDT,17.73,True,interpolated
+2023-03,LQDT,30.95,True,interpolated
+2023-04,LQDT,44.18,True,interpolated
+2023-05,LQDT,57.41,True,interpolated
+2023-06,LQDT,70.64,True,interpolated
+2023-07,LQDT,83.86,True,interpolated
+2023-08,LQDT,97.09,True,interpolated
+2023-09,LQDT,110.32,True,interpolated
+2023-10,LQDT,123.55,True,interpolated
+2023-11,LQDT,136.77,True,interpolated
+2023-12,LQDT,150.0,False,direct from UK/investfunds.ru
+2024-01,LQDT,152.8,True,interpolated
+2024-02,LQDT,155.6,True,interpolated
+2024-03,LQDT,158.4,True,interpolated
+2024-04,LQDT,161.2,True,interpolated
+2024-05,LQDT,164.0,False,direct from UK/investfunds.ru
+2024-06,LQDT,190.95,True,interpolated
+2024-07,LQDT,217.9,True,interpolated
+2024-08,LQDT,244.85,True,interpolated
+2024-09,LQDT,271.8,True,interpolated
+2024-10,LQDT,298.75,True,interpolated
+2024-11,LQDT,325.7,True,interpolated
+2024-12,LQDT,352.65,True,interpolated
+2025-01,LQDT,379.6,False,direct from UK/investfunds.ru
+2025-01,SBMM,277.6,False,direct from UK/investfunds.ru
+2025-01,AKMM,210.5,False,direct from UK/investfunds.ru
+2025-01,TMON,75.6,False,direct from UK/investfunds.ru
+2025-01,AMNR,37.9,False,direct from UK/investfunds.ru
+2025-02,LQDT,403.0,False,direct from UK/investfunds.ru
+2025-02,SBMM,275.0,False,direct from UK/investfunds.ru
+2025-02,AKMM,209.0,False,direct from UK/investfunds.ru
+2025-02,TMON,77.3,False,direct from UK/investfunds.ru
+2025-02,AMNR,51.1,False,direct from UK/investfunds.ru
+2025-03,LQDT,397.08,True,interpolated
+2025-03,SBMM,276.62,True,interpolated
+2025-03,AKMM,208.14,True,interpolated
+2025-03,TMON,99.5,True,interpolated
+2025-03,AMNR,51.81,True,interpolated
+2025-04,LQDT,391.16,True,interpolated
+2025-04,SBMM,278.24,True,interpolated
+2025-04,AKMM,207.28,True,interpolated
+2025-04,TMON,121.7,True,interpolated
+2025-04,AMNR,52.51,True,interpolated
+2025-05,LQDT,385.24,True,interpolated
+2025-05,SBMM,279.86,True,interpolated
+2025-05,AKMM,206.42,True,interpolated
+2025-05,TMON,143.9,True,interpolated
+2025-05,AMNR,53.22,True,interpolated
+2025-06,LQDT,379.32,True,interpolated
+2025-06,SBMM,281.48,True,interpolated
+2025-06,AKMM,205.56,True,interpolated
+2025-06,TMON,166.1,True,interpolated
+2025-06,AMNR,53.93,True,interpolated
+2025-07,LQDT,373.4,False,direct from UK/investfunds.ru
+2025-07,SBMM,283.1,False,direct from UK/investfunds.ru
+2025-07,AKMM,204.7,False,direct from UK/investfunds.ru
+2025-07,TMON,188.3,False,direct from UK/investfunds.ru
+2025-07,AMNR,54.63,True,interpolated
+2025-07,BCSD,29.4,False,direct from UK/investfunds.ru
+2025-08,LQDT,394.0,True,interpolated
+2025-08,SBMM,287.63,True,interpolated
+2025-08,AKMM,214.89,True,interpolated
+2025-08,TMON,198.02,True,interpolated
+2025-08,AMNR,55.34,True,interpolated
+2025-08,BCSD,30.55,True,interpolated
+2025-09,LQDT,414.6,True,interpolated
+2025-09,SBMM,292.17,True,interpolated
+2025-09,AKMM,225.08,True,interpolated
+2025-09,TMON,207.75,True,interpolated
+2025-09,AMNR,56.04,True,interpolated
+2025-09,BCSD,31.7,True,interpolated
+2025-10,LQDT,435.2,True,interpolated
+2025-10,SBMM,296.7,True,interpolated
+2025-10,AKMM,235.27,True,interpolated
+2025-10,TMON,217.48,True,interpolated
+2025-10,AMNR,56.75,True,interpolated
+2025-10,BCSD,32.84,True,interpolated
+2025-11,LQDT,455.8,True,interpolated
+2025-11,SBMM,301.23,True,interpolated
+2025-11,AKMM,245.46,True,interpolated
+2025-11,TMON,227.2,True,interpolated
+2025-11,AMNR,57.46,True,interpolated
+2025-11,BCSD,33.99,True,interpolated
+2025-12,LQDT,476.4,True,interpolated
+2025-12,SBMM,305.77,True,interpolated
+2025-12,AKMM,255.66,True,interpolated
+2025-12,TMON,236.92,True,interpolated
+2025-12,AMNR,58.16,True,interpolated
+2025-12,BCSD,35.14,True,interpolated
+2026-01,LQDT,497.0,False,direct from UK/investfunds.ru
+2026-01,SBMM,310.3,True,interpolated
+2026-01,AKMM,265.85,True,interpolated
+2026-01,TMON,246.65,True,interpolated
+2026-01,AMNR,58.87,True,interpolated
+2026-01,BCSD,36.29,True,interpolated
+2026-02,LQDT,538.5,True,interpolated
+2026-02,SBMM,314.83,True,interpolated
+2026-02,AKMM,276.04,True,interpolated
+2026-02,TMON,256.38,True,interpolated
+2026-02,AMNR,59.58,True,interpolated
+2026-02,BCSD,37.43,True,interpolated
+2026-03,LQDT,580.0,False,direct from UK/investfunds.ru
+2026-03,SBMM,319.37,True,interpolated
+2026-03,AKMM,286.23,True,interpolated
+2026-03,TMON,266.1,True,interpolated
+2026-03,AMNR,60.28,True,interpolated
+2026-03,BCSD,38.58,True,interpolated
+2026-04,LQDT,615.57,True,interpolated
+2026-04,SBMM,323.9,True,interpolated
+2026-04,AKMM,296.42,True,interpolated
+2026-04,TMON,275.82,True,interpolated
+2026-04,AMNR,60.99,True,interpolated
+2026-04,BCSD,39.73,True,interpolated
+2026-05,LQDT,651.15,True,interpolated
+2026-05,SBMM,328.43,True,interpolated
+2026-05,AKMM,306.61,True,interpolated
+2026-05,TMON,285.55,True,interpolated
+2026-05,AMNR,61.69,True,interpolated
+2026-05,BCSD,40.88,True,interpolated
+2026-06,LQDT,686.72,True,interpolated
+2026-06,SBMM,332.97,True,interpolated
+2026-06,AKMM,316.8,True,interpolated
+2026-06,TMON,295.27,True,interpolated
+2026-06,AMNR,62.4,True,interpolated
+2026-06,BCSD,42.03,True,interpolated
+2026-07,LQDT,722.29,True,interpolated
+2026-07,SBMM,337.5,False,direct from UK/investfunds.ru
+2026-07,AKMM,326.99,False,direct from UK/investfunds.ru
+2026-07,TMON,305.0,False,direct from UK/investfunds.ru
+2026-07,AMNR,63.11,True,interpolated
+2026-07,BCSD,43.17,True,interpolated
+2026-08,LQDT,757.86,True,interpolated
+2026-08,SBMM,352.62,True,interpolated
+2026-08,AKMM,333.7,False,direct from UK/investfunds.ru
+2026-08,TMON,313.49,True,interpolated
+2026-08,AMNR,63.81,True,interpolated
+2026-08,BCSD,44.32,True,interpolated
+2026-09,LQDT,793.44,False,direct from UK/investfunds.ru
+2026-09,SBMM,367.75,False,direct from UK/investfunds.ru
+2026-09,AKMM,337.28,False,direct from UK/investfunds.ru
+2026-09,TMON,321.97,False,direct from UK/investfunds.ru
+2026-09,AMNR,64.52,False,direct from UK/investfunds.ru
+2026-09,BCSD,45.47,True,interpolated
+2026-10,LQDT,794.84,False,direct from UK/investfunds.ru
+2026-10,SBMM,369.25,False,direct from UK/investfunds.ru
+2026-10,AKMM,337.52,False,direct from UK/investfunds.ru
+2026-10,TMON,321.97,True,interpolated
+2026-10,AMNR,64.52,True,interpolated
+2026-10,BCSD,46.62,False,direct from UK/investfunds.ru
